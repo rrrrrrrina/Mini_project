@@ -170,14 +170,14 @@
 		  <c:forEach var="product" items="${list}">
 			<c:set var="i" value="${ i+1 }" />
 			<tr>
-			  <td align="left">${ i }</td>
-			  <td align="left"><img src="/images/uploadFiles/${product.fileName}" width="50" height="50"/>
-			  <td align="left" id="name">${product.prodName}</td>
+			  <td>${ i }</td>
+			  <td><img src="/images/uploadFiles/${product.fileName}" width="50" height="50"/>
+			  <td id="name">${product.prodName}</td>
 			  <input type="hidden" id="prodNo" name="prodNo" value="${product.prodNo}"/>
 			  <input type="hidden" id="proTranCode" name="proTranCode" value='${product.proTranCode.trim()}'/>
-			  <td align="center" id="name">${product.price}</td>
-			  <td align="left">${product.prodDetail}</td>
-			  <td align="left">${product.regDate}</td>
+			  <td id="name">${product.price}</td>
+			  <td>${product.prodDetail}</td>
+			  <td>${product.regDate}</td>
 			  <c:set var="tranCode" value="판매중"/>
 			  <c:if test="${role=='admin'}">
 					<c:if test="${product.proTranCode.trim()=='1'}">
@@ -199,7 +199,7 @@
 			  <c:if test="${!empty menu && menu=='manage' && product.proTranCode.trim()=='1'}">
 					배송하기
 			  </c:if>
-			  <td align="center">${product.countLiked}</td>
+			  <td>${product.countLiked}</td>
 			  <tr>
 			  <td id="${product.prodName}" colspan="15"></td>
 			  </tr>

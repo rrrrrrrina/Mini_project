@@ -3,6 +3,7 @@ package com.model2.mvc.service.product;
 import java.util.Map;
 
 import com.model2.mvc.common.Search;
+import com.model2.mvc.service.domain.Comment;
 import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.WishList;
 
@@ -23,5 +24,13 @@ public interface ProductService {
 	public boolean checkWishList(WishList wishList) throws Exception;
 	
 	public int deleteWishList(WishList wishList) throws Exception;
+	
+	public void addComment(Comment comment) throws Exception;
+	
+	public Map<String,Object> getCommentList(int prodNo) throws Exception;
+	
+	public void updateComment(Comment comment) throws Exception;
+	
+	public int deleteComment(Comment comment) throws Exception;
 	
 }

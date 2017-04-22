@@ -111,23 +111,43 @@
 	  		<div class="col-xs-4 col-md-2"><strong>등록일자</strong></div>
 			<div class="col-xs-8 col-md-4">${product.regDate}"</div>
 		</div>
-		
 		<hr/>
 		</div>
-		<div class="row">
-	  		<div class="col-md-12 text-center ">
-	  			<c:if test='${isDuplicate}'>
-	  				<button class="btn" id="cancel" >찜하기취소</button>
-	  			</c:if>
-	  			<c:if test='${!isDuplicate}'>
-	  				<button class="btn" id="wishList" >찜하기</button>
-	  			</c:if>
-	  			<c:if test='${product.proTranCode==0}'>
-	  				<button class="btn" id="purchase" >구매</button>
-	  			</c:if>
-	  			<button class="btn" id="back" >이전</button>
-	  		</div>
+		
+		<div class=formbg>
+			<div class="row">
+				<div class="col-xs-4 col-md-2"><strong>${user.userId}</strong></div>
+				<div class="col-xs-8 col-md-6"><input type="text" id="contents" name="contents" size="40" value="댓글을 남겨주세요."/><br/>
+				<td align="center">비밀글<input type="checkbox" name="chbox" value="${comment.isPrivate}"></td>
+				<button class="search btn-default" id="confirm" >확인</button></div>
+					<%-- <c:set var="i" value="0" />
+		  			<c:forEach var="comment" items="${list}">
+					<c:set var="i" value="${ i+1 }" /> --%>
+						<tr>
+							<%-- <td>${ i }</td> --%>
+							<td id="commenterId">${comment.commenterId}</td>
+							<td id="contents">${comment.contents}</td>
+						</tr>
+			</div>
 		</div>
+		
+		<div class=formbg>
+			<div class="row">
+		  		<div class="col-md-12 text-center ">
+		  			<c:if test='${isDuplicate}'>
+		  				<button class="btn" id="cancel" >찜하기취소</button>
+		  			</c:if>
+		  			<c:if test='${!isDuplicate}'>
+		  				<button class="btn" id="wishList" >찜하기</button>
+		  			</c:if>
+		  			<c:if test='${product.proTranCode==0}'>
+		  				<button class="btn" id="purchase" >구매</button>
+		  			</c:if>
+		  			<button class="btn" id="back" >이전</button>
+		  		</div>
+			</div>
+		</div>
+		
 	  <br/>
  	</div>
  	</form>

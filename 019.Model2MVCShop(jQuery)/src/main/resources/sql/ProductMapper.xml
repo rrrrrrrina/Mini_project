@@ -37,6 +37,16 @@
 		</association>
 	</resultMap>
 	
+	<resultMap id="commentSelectMap" type="comment">
+		<result property="commentNo" 	column="comment_no" 		jdbcType="NUMERIC"/>
+		<result property="prodNo"		column="prod_no" 			jdbcType="NUMERIC" />
+		<result property="commenterId" 	column="commenter_id" 		jdbcType="NUMERIC" />
+		<result property="commentDate" 	column="comment_date" 		jdbcType="DATE" />
+		<result property="contents" 	column="contents" 			jdbcType="VARCHAR" />
+		<result property="receiverId" 	column="receiver_id" 		jdbcType="VARCHAR" />
+		<result property="isPrivate" 	column="is_private" 		jdbcType="NUMERIC" />
+	</resultMap>
+	
 	 <insert 	id="insertProduct"		parameterType="product" >
 		INSERT 
 		INTO 

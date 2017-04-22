@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import com.model2.mvc.common.Search;
+import com.model2.mvc.service.domain.Comment;
 import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.Purchase;
 import com.model2.mvc.service.domain.User;
@@ -47,9 +48,8 @@ public class ProductDAOImpl implements ProductDAO {
 		Map<String , Object>  temp = new HashMap<String, Object>();
 		
 		List<WishList> wishList= sqlSession.selectList("ProductMapper.getWishList",search);
-		System.out.println(wishList);
+		
 		for (int i = 0; i < wishList.size(); i++) {
-			System.out.println("dddddd");
 			Product product=sqlSession.selectOne("ProductMapper.getProduct",wishList.get(i).getProductNo());
 
 			wishList.get(i).setWishedProd(product);
@@ -86,9 +86,28 @@ public class ProductDAOImpl implements ProductDAO {
 		return (temp==0? false:true);
 	}
 
-	@Override
 	public int deleteWishList(WishList wishList) {
-		System.out.println("dddddddddddddddddddddddd"+wishList);
 		return sqlSession.delete("ProductMapper.deleteWishList", wishList);
+	}
+	
+	public void addComment(Comment comment) throws Exception {
+		sqlSession.insert("ProductMapper.addComment",comment);
+	}
+	
+	public Map<String , Object > getCommentList(int prodNo) throws Exception {
+		Map<String , Object>  map = new HashMap<String, Object>();
+
+		List<Comment> comment=sqlSession.selectList("ProductMapper.getCommentList", prodNo);
+		map.put("list", comment);
+		
+		return map;
+	}
+	
+	public void updateComment(Comment comment) throws Exception {
+		sqlSession.update("ProductMapper.updateComment",comment);
+	}
+	
+	public int deleteComment(Comment comment) throws Exception {
+		return sqlSession.delete("ProductMapper.deleteComment", comment);
 	}
 }

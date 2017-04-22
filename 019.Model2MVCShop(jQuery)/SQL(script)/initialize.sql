@@ -9,6 +9,18 @@ DROP SEQUENCE seq_transaction_tran_no;
 CREATE SEQUENCE seq_messages_message_no 	INCREMENT BY 1 START WITH 10000;
 CREATE SEQUENCE seq_product_prod_no		INCREMENT BY 1 START WITH 10000;
 CREATE SEQUENCE seq_transaction_tran_no	INCREMENT BY 1 START WITH 10000;
+CREATE SEQUENCE seq_comments_comment_no		INCREMENT BY 1 START WITH 10000;
+
+CREATE TABLE comments ( 
+	comment_no			NUMBER 			NOT NULL,
+	product_no			NUMBER 			NOT NULL,
+	commenter_id 		VARCHAR2(50)		NOT NULL,
+	comment_date 		DATE,
+	contents 			VARCHAR2(1000),
+	receiver_id 		VARCHAR2(50),
+	is_private			CHAR(1) DEFAULT '0',
+	PRIMARY KEY(comment_no)
+);
 
 CREATE TABLE messages ( 
 	message_no			NUMBER 			NOT NULL,

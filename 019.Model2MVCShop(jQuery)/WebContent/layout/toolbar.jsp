@@ -70,7 +70,7 @@
 		
 		
 </script>
-<div class="navbar navbar-custom navbar-fixed-top">
+<div class="navbar navbar-custom">
 	<div class="container">
 		<div class="navbar-header page-scroll">
 		    <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#target">

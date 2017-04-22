@@ -20,6 +20,7 @@
 		<typeAlias alias="purchase" type="com.model2.mvc.service.domain.Purchase"/>
 		<typeAlias alias="wishList" type="com.model2.mvc.service.domain.WishList"/>
 		<typeAlias alias="message" type="com.model2.mvc.service.domain.Message"/>
+		<typeAlias alias="comment" type="com.model2.mvc.service.domain.Comment"/>
 	</typeAliases>
 	
 	 <!-- SQL Definition :: file include -->

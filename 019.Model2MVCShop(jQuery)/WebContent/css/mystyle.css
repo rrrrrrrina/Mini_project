@@ -92,7 +92,6 @@ header .intro-text .intro-heading {
 @media (min-width: 768px) {
   .navbar-custom {
     background-color: transparent;
-    padding: 25px 0;
     -webkit-transition: padding 0.3s;
     -moz-transition: padding 0.3s;
     transition: padding 0.3s;
@@ -140,13 +139,15 @@ header .intro-text .intro-heading {
   }
 }
 
+.btn:hover,
 .btn:focus,
 .btn:active,
 .btn.active,
 .btn:active:focus {
   outline: none;
+  color: white;
+  background-color: #fec503;
 }
-
 .btn-xl {
   color: white;
   background-color: #fed136;
@@ -162,7 +163,8 @@ header .intro-text .intro-heading {
 .btn-xl:focus,
 .btn-xl:active,
 .btn-xl.active,
-.open .dropdown-toggle.btn-xl {
+.open .dropdown-toggle.btn-xl,
+.btn-default:hover {
   color: white;
   background-color: #fec503;
   border-color: #f6bf01;
@@ -331,7 +333,6 @@ p {
     border-bottom: none;
 }
 button.search {
-    height: 23px;
     margin: 3 auto;
     background: rgba(254, 209, 54, 0.77);
     font-size: 13px;
@@ -344,6 +345,9 @@ button.search {
     margin-bottom: 10px;
     margin-top:30px;
     background: none;
+}
+th, td {
+    text-align: center;
 }
 .table tbody tr td:hover {
     background: none !important;
