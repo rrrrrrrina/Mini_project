@@ -49,8 +49,8 @@
 			var prodNo = $(this).next().val();
 			var prodName=$(this).text().trim();
 			var menu=$("#menu").val();
-			var destination='<input type="button" value="상세보기" id="detail"/>';
-			
+			var detail='<input type="button" value="상세보기" id="detail"/>';
+			var wishButton='<input type="button" id="wishButton" value="찜하기"/>';
 			if(menu=='manage'){
 				destination='<input type="button" value="수정하기" id="fix"/>';
 			}
@@ -64,39 +64,86 @@
 							"Accept" : "application/json",
 							"Content-Type" : "application/json"
 						},
+						context : this,
 						success : function(JSONData , status) {
+							/* if(JSONData.isDuplicate){
+								option='찜하기취소'
+							} */
 							var displayValue = "<h5>"
 														+"상품명 : "+JSONData.product.prodName+"<br/>"
 														+"제조날짜 : "+JSONData.product.manuDate+"<br/>"
 														+"상세정보 : "+JSONData.product.prodDetail+"<br/>"
 														+"가격 : "+JSONData.product.price+"<br/>"
 														+"등록일 : "+JSONData.product.regDate+"<br/>"
-														+destination
+														+detail
+														+wishButton
 														+"</h5>";
 							$("h5").remove();
 							$( "#"+prodName+"" ).html(displayValue);
+							var prodNo=JSONData.product.prodNo;
+							alert(prodNo);
+							
+							if(JSONData.isDuplicate){
+								$('#wishButton').val('찜하기취소');
+							}
+							
 							$(document).on('click', '#detail',function(){
 					 			self.location="/product/getProduct?prodNo="+JSONData.product.prodNo+"&proTranCode="+JSONData.product.proTranCode;
 					 		});
 							$(document).on('click', '#fix',function(){
 					 			self.location="/product/updateProduct?prodNo="+JSONData.product.prodNo;
 					 		});
+							$(document).on('click', '#wishButton',function(){
+								if($(this).val()=='찜하기'){
+									$.ajax( 
+											{
+												url : "/product/addJsonWishList/"+prodNo,
+												method : "GET" ,
+												dataType : "json" ,
+												headers : {
+													"Accept" : "application/json",
+													"Content-Type" : "application/json"
+												},
+												context : this,
+												success : function(serverData , status) {
+													$(this).val('찜하기취소');
+													alert("dd");
+													alert(serverData.product.countLiked);
+													
+												}
+											});
+								}else if($(this).val()=='찜하기취소'){
+									$.ajax( 
+											{
+												url : "/product/deleteJsonWishList/"+prodNo,
+												method : "GET" ,
+												dataType : "json" ,
+												headers : {
+													"Accept" : "application/json",
+													"Content-Type" : "application/json"
+												},
+												context : this,
+												success : function(serverData , status) {
+													$(this).val('찜하기');
+													alert(serverData.product.countLiked);
+													alert($( "#"+prodName+"" ).html());
+													
+												}
+											});
+								}
+							});
 						}
-				});
+					});
 			
-		});	
-		/* 
-		$( "td:nth-child(3)" ).on("click" , function() {
-			self.location ="/user/getUser?userId="+$(this).text().trim();
-		}); */
+		});
 		
 		$( "td:nth-child(9)" ).on("click" , function() {
 			self.location="/purchase/updateTranCodeByProd?prodNo="+$(this).parents('tr').find('input').val().trim()+
 					"&proTranCode="+$(this).parents('tr').find('input').next().val().trim();
 		});
 		
+	 });
 		
-	});
 	
 </script>
 
@@ -121,11 +168,12 @@
 		    	<form class="form-inline" name="detailForm">
 				<div class="form-group">
 					<label class="sr-only" for="searchKeyword">가격검색</label>
+					<div class="text-primary">가격검색
 					<input 	type="text" id="startPrice" name="startPrice" value="${!empty search.startPrice? search.startPrice : ""}"
 							class="ct_input_g" style="height:20px;width:70px;" />~
 					<input 	type="text" id="endPrice" name="endPrice" value="${!empty search.endPrice? search.endPrice : ""}"
 							class="ct_input_g" style="height:20px;width:70px;" />
-				    <button type="button" class="search btn-default">search</button>
+				    <button type="button" class="search btn-default">search</button></div>
 				    <input type="hidden" id="currentPage" name="currentPage" value=""/>
 				    <input type="hidden" id="orderByPrice" name="orderByPrice" value="${!empty search.orderByPrice? search.orderByPrice:''}"/> 
 				</div>
@@ -138,7 +186,7 @@
 						<option value="2" ${search.searchCondition=="2"? "selected" : ""}>상품가격</option>
 					</select>
 					<input 	type="text" name="searchKeyword"  value="${!empty search.searchKeyword? search.searchKeyword : ""}" 
-							class="ct_input_g" style="width:153px; height:19px" >
+							class="ct_input_g" style="width:172px; height:19px" >
 				    <button type="button" class="search btn-default">search</button>
 				</div>
 				  <input type="hidden" id="currentPage" name="currentPage" value=""/>
@@ -199,7 +247,7 @@
 			  <c:if test="${!empty menu && menu=='manage' && product.proTranCode.trim()=='1'}">
 					배송하기
 			  </c:if>
-			  <td>${product.countLiked}</td>
+			  <td id="countLiked">${product.countLiked}</td>
 			  <tr>
 			  <td id="${product.prodName}" colspan="15"></td>
 			  </tr>

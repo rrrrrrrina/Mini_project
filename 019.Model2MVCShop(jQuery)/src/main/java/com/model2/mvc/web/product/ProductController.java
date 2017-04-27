@@ -82,7 +82,6 @@ public class ProductController {
 	public String deleteWishList( @RequestParam( value="productNo", defaultValue="0") int productNo, @RequestParam( value="chbox", required=false) List<String> values, HttpSession session, Model model ) throws Exception {
 
 		System.out.println("/deleteWishList");
-		System.out.println(values);
 		WishList wishList=new WishList();
 		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
 		
@@ -96,8 +95,22 @@ public class ProductController {
 			productService.deleteWishList(wishList);
 		}
 		
-		
 		return "redirect:/product/listWishList";
+	}
+	
+	@RequestMapping(value={"deleteJsonWishList/{productNo}"}, method=RequestMethod.GET)
+	public void deleteJsonWishList( @RequestParam( value="productNo", defaultValue="0") int productNo, HttpSession session, Model model ) throws Exception {
+
+		System.out.println("/deleteJsonWishList");
+		WishList wishList=new WishList();
+		
+		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
+		wishList.setProductNo(productNo);
+		
+		productService.deleteWishList(wishList);
+		Product product=productService.getProduct(productNo);
+		
+		model.addAttribute("product", product);
 	}
 	
 	@RequestMapping(value="addWishList", method=RequestMethod.POST)
@@ -105,14 +118,31 @@ public class ProductController {
 		
 		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
 		
-		System.out.println("/addWishList.do");
-		System.out.println("addWishList ³» wishList"+wishList);
+		System.out.println("/addWishList");
 		
 		if(!productService.checkWishList(wishList)){
 			productService.addWishList(wishList);
 		}
 		
 		return "redirect:/product/listWishList";
+	}
+	
+	@RequestMapping(value={"addJsonWishList/{prodNo}"}, method=RequestMethod.GET)
+	public void addJsonWishList( @PathVariable int prodNo, HttpSession session, Model model ) throws Exception {
+		
+		System.out.println("/addJsonWishList");
+		WishList wishList=new WishList();
+		
+		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
+		wishList.setProductNo(prodNo);
+		
+		if(!productService.checkWishList(wishList)){
+			productService.addWishList(wishList);
+		}
+		
+		Product product=productService.getProduct(prodNo);
+		
+		model.addAttribute("product", product);
 	}
 	
 	@RequestMapping(value="getProduct", method=RequestMethod.GET)
@@ -149,10 +179,18 @@ public class ProductController {
 	public void getJsonProduct( @PathVariable int prodNo, HttpSession session, Model model ) throws Exception {
 		
 		System.out.println("/getJsonProduct");
+		WishList wishList=new WishList();
+		boolean isDuplicate=true;		
 		
 		Product product=productService.getProduct(prodNo);
+		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
+		wishList.setProductNo(prodNo);
+		if(!productService.checkWishList(wishList)){
+			isDuplicate=false;
+		}
 		
 		model.addAttribute("product", product);
+		model.addAttribute("isDuplicate", isDuplicate);
 	}
 	
 	@RequestMapping(value="updateProduct", method=RequestMethod.GET)
@@ -186,10 +224,10 @@ public class ProductController {
 		User user=(User)session.getAttribute("user");
 		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
 		
-		System.out.println(map.get("list"));
-		
 		model.addAttribute("list", map.get("list"));
-		model.addAttribute("role", user.getRole());
+		if(user!=null){
+			model.addAttribute("role", user.getRole());
+		}
 		model.addAttribute("menu", menu);
 		model.addAttribute("resultPage", resultPage);
 		model.addAttribute("search", search);
