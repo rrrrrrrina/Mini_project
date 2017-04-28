@@ -52,7 +52,7 @@
 			var detail='<input type="button" value="상세보기" id="detail"/>';
 			var wishButton='<input type="button" id="wishButton" value="찜하기"/>';
 			if(menu=='manage'){
-				destination='<input type="button" value="수정하기" id="fix"/>';
+				detail='<input type="button" value="수정하기" id="fix"/>';
 			}
 			$.ajax( 
 					{
