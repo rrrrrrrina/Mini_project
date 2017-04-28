@@ -68,7 +68,7 @@ CREATE TABLE transaction (
 	demailaddr 			VARCHAR2(100),
 	dlvy_request 		VARCHAR2(100),
 	tran_status_code	CHAR(3),
-	order_data 			DATE,
+	order_date			DATE,
 	dlvy_date 			DATE,
 	PRIMARY KEY(tran_no)
 );

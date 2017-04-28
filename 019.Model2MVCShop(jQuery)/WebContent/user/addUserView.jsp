@@ -77,14 +77,13 @@
 	
 	$(function() {
 		$( "#join" ).on("click" , function() {
-			alert("dd");
 			fncAddUser();
 		});
 	});	
 	
 	$(function() {
-		 $( "#cancel" ).on("click" , function() {
-				$("form")[0].reset();
+		$( "#cancel" ).on("click" , function() {
+			$("form")[0].reset();
 		});
 	});	
 
@@ -132,14 +131,31 @@ function PortalJuminCheck(fieldValue){
 }
 
 	$(function() {
-		 $("#duplication").on("click" , function() {
-			popWin 
-			= window.open("/user/checkDuplication.jsp",
-									"popWin", 
-									"left=300,top=200,width=300,height=200,marginwidth=0,marginheight=0,"+
-									"scrollbars=no,scrolling=no,menubar=no,resizable=no");
-		});
-	});	
+
+		$( "#userId" ).on("keyup" , function() {
+			
+			var userId=$("#userId").val();
+			
+			$.ajax( 
+					{
+						url : "/user/checkJsonDuplication/"+userId ,
+						method : "GET" ,
+						dataType : "json" ,
+						headers : {
+							"Accept" : "application/json",
+							"Content-Type" : "application/json"
+						},
+						context : this,
+						success : function(JSONData , status) {
+							if(JSONData.result){
+								$("#check").html("사용불가한 아이디입니다.");
+							}else{
+								$("#check").html("사용가능한 아이디입니다.");
+							}
+						}
+					});
+			});
+		});	
 
 </script>
 </head>
@@ -158,12 +174,9 @@ function PortalJuminCheck(fieldValue){
 		<div class="form-group">
 		    <label for="userId" class="col-sm-offset-1 col-sm-3 control-label">아 이 디</label>
 		    <div class="col-sm-3">
-		      <input type="text" class="form-control" id="userId" name="userId" placeholder="중복확인하세요" width="50px" readonly>
+		      <input type="text" class="form-control" id="userId" name="userId" placeholder="중복확인하세요" width="50px"><div id="check">아이디를 입력하세요</div></input>
 		    </div>
-		    <div class="col-sm-2">
-		      <button type="button" class="btn" id="duplication">중복확인</button>
-		    </div>
-		  </div>
+		</div>
 		  
 	<div class="form-group">
 		    <label for="password" class="col-sm-offset-1 col-sm-3 control-label">비밀번호</label>
@@ -201,8 +214,10 @@ function PortalJuminCheck(fieldValue){
 		  </div>	
 		  <div class="form-group">
 		    <label for="ssn" class="col-sm-offset-1 col-sm-3 control-label">휴대전화번호</label>
-		     <div class="col-sm-3">
-		    <input type="text" class="form-control" id="phone" name="phone" placeholder="번호">
+		    <div class="col-sm-3 your-class">
+		    <input type="text" class="form-control" id="phone1" name="phone1" style="width:60px">
+		    <input type="text" class="form-control" id="phone2" name="phone2" style="width:60px">
+		    <input type="text" class="form-control" id="phone3" name="phone3" style="width:60px">
 		    </div>
 		    <input type="hidden" name="phone"/>
 		  </div>

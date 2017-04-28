@@ -61,6 +61,8 @@
 				
 				$("form").attr("method","POST").attr("action","/user/login").attr("target","_parent").submit();
 			});
+			
+				
 		});	
 		
 		

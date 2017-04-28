@@ -26,7 +26,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.Message;
+import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.User;
+import com.model2.mvc.service.domain.WishList;
 import com.model2.mvc.service.user.UserService;
 
 
@@ -59,7 +61,7 @@ public class UserController {
 		return "redirect:/user/addUserView.jsp";
 	}
 	
-	/*@RequestMapping( value="addUser", method=RequestMethod.POST )
+	@RequestMapping( value="addUser", method=RequestMethod.POST )
 	public String addUser( @ModelAttribute("user") User user ) throws Exception {
 
 		System.out.println("/user/addUser : POST");
@@ -67,7 +69,7 @@ public class UserController {
 		userService.addUser(user);
 		
 		return "redirect:/user/loginView.jsp";
-	}*/
+	}
 	
 
 	@RequestMapping( value="getUser", method=RequestMethod.GET )
@@ -149,13 +151,10 @@ public class UserController {
 		return "redirect:/index.jsp";
 	}
 	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////  추가된 부분 ///////////////////////////////////////////////////////////////
 	@RequestMapping( value="jsonLogin", method=RequestMethod.POST )
 	public void jsonLogin(	@RequestBody User user, HttpSession session, Model model) throws Exception{
 	
 		System.out.println("/user/jsonLogin : POST");
-		//Business Logic
 		System.out.println("::"+user);
 		User dbUser=userService.getUser(user.getUserId());
 		
@@ -165,8 +164,6 @@ public class UserController {
 		
 		model.addAttribute("user", dbUser);
 	}
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
 	
 	@RequestMapping( value="logout", method=RequestMethod.GET )
 	public String logout(HttpSession session ) throws Exception{
@@ -178,18 +175,14 @@ public class UserController {
 		return "redirect:/index.jsp";
 	}
 	
-	
-	@RequestMapping( value="checkDuplication", method=RequestMethod.POST )
-	public String checkDuplication( @RequestParam("userId") String userId , Model model ) throws Exception{
+	@RequestMapping(value={"/checkJsonDuplication/{userId}"}, method=RequestMethod.GET)
+	public void checkJsonDuplication( @PathVariable String userId, HttpSession session, Model model ) throws Exception {
 		
-		System.out.println("/user/checkDuplication : POST");
-		//Business Logic
+		System.out.println("/user/checkJsonDuplication");
+		
 		boolean result=userService.checkDuplication(userId);
-		// Model 과 View 연결
+		
 		model.addAttribute("result", new Boolean(result));
-		model.addAttribute("userId", userId);
-
-		return "forward:/user/checkDuplication.jsp";
 	}
 
 	
@@ -227,7 +220,6 @@ public class UserController {
 		if(messageNo!=null){
 			message = userService.getMessage(Integer.parseInt(messageNo));
 			(message.getContents()).replaceAll("\r\n", "<BR>") ;
-			System.out.println("ddddddddddddddddddddddddd"+message);
 			model.addAttribute("message", message);
 		}
 		return destination;
