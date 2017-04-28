@@ -39,7 +39,7 @@
 		//============= "수정"  Event 연결 =============
 		 $(function() {
 			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
-			$( "button.btn.btn-primary" ).on("click" , function() {
+			$( "#fix" ).on("click" , function() {
 				fncUpdateUser();
 			});
 		});	
@@ -48,7 +48,7 @@
 		//============= "취소"  Event 처리 및  연결 =============
 		$(function() {
 			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
-			$("a[href='#' ]").on("click" , function() {
+			$("#cancel").on("click" , function() {
 				$("form")[0].reset();
 			});
 		});	
@@ -176,8 +176,8 @@
 		  
 		  <div class="form-group">
 		    <div class="col-sm-offset-4  col-sm-4 text-center">
-		      <button type="button" class="btn btn-primary"  >수 &nbsp;정</button>
-			  <a class="btn btn-primary btn" href="#" role="button">취 &nbsp;소</a>
+		      <button type="button" class="btn btn-primary" id="fix" >수 &nbsp;정</button>
+		      <button type="button" class="btn btn-primary" id="cancel" >취 &nbsp;소</button>
 		    </div>
 		  </div>
 		</form>

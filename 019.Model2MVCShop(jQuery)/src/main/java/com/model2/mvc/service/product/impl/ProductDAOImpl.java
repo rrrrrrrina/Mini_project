@@ -76,8 +76,13 @@ public class ProductDAOImpl implements ProductDAO {
 		return sqlSession.selectOne("ProductMapper.getTotalCount", search);
 	};
 	
-	public void addWishList(WishList wishList) throws Exception {
+	public int addWishList(WishList wishList) throws Exception {
 		sqlSession.insert("ProductMapper.insertWishList", wishList);
+		Map<String , Object>  temp = new HashMap<String, Object>();
+		temp.put("searchCondition", "1");
+		temp.put("productNo", wishList.getProductNo());
+
+		return sqlSession.selectOne("ProductMapper.getTotalCountForWish", temp);
 	}
 	
 	public boolean checkWishList(WishList wishList) throws Exception {
@@ -87,7 +92,13 @@ public class ProductDAOImpl implements ProductDAO {
 	}
 
 	public int deleteWishList(WishList wishList) {
-		return sqlSession.delete("ProductMapper.deleteWishList", wishList);
+		sqlSession.delete("ProductMapper.deleteWishList", wishList);
+		
+		Map<String , Object>  temp = new HashMap<String, Object>();
+		temp.put("searchCondition", "1");
+		temp.put("productNo", wishList.getProductNo());
+
+		return sqlSession.selectOne("ProductMapper.getTotalCountForWish", temp);
 	}
 	
 	public void addComment(Comment comment) throws Exception {

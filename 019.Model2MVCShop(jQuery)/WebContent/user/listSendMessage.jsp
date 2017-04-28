@@ -74,7 +74,6 @@
 	<jsp:include page="/layout/toolbar.jsp" />
 	
 	<form class="form-inline" name="detailForm">
-		<jsp:include page="/layout/toolbar.jsp" />
 		<div class="container">
 			<div class="page-header text-info">
 		       <h3>${user.userId} 님의  보낸쪽지함</h3>

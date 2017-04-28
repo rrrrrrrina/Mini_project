@@ -73,6 +73,13 @@ CREATE TABLE transaction (
 	PRIMARY KEY(tran_no)
 );
 
+CREATE TABLE wishlist(
+	product_no			VARCHAR2(20)	NOT NULL,
+	customer_id			VARCHAR2(20)	NOT NULL,
+	wished_date			DATE
+);
+
+
 
 INSERT 
 INTO users ( user_id, user_name, password, role, ssn, cell_phone, addr, email, reg_date ) 
@@ -149,6 +156,7 @@ insert into product values (seq_product_prod_no.nextval,'삼성센스 2G','sens 메모
 insert into product values (seq_product_prod_no.nextval,'연꽃','정원을 가꿔보세요','20121022',232300, 'AHlbAAAAtDPSiQAA.jpg',to_date('2012/11/15 17:39:01', 'YYYY/MM/DD HH24:MI:SS'));
 insert into product values (seq_product_prod_no.nextval,'삼성센스','노트북','20120212',600000, 'AHlbAAAAug1vsgAA.jpg',to_date('2012/11/12 13:04:31', 'YYYY/MM/DD HH24:MI:SS'));
 
+insert into transaction values (seq_transaction_tran_no.nextval,10007,'user01','1','리나','01040052222','서울시 노원구','빨리 보내주세요','1','20170427','20170513'));
 
 commit;
 

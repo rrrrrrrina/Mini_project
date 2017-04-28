@@ -19,7 +19,7 @@ public interface ProductService {
 
 	public void updateProduct(Product product) throws Exception;
 	
-	public void addWishList(WishList wishList) throws Exception;
+	public int addWishList(WishList wishList) throws Exception;
 	
 	public boolean checkWishList(WishList wishList) throws Exception;
 	

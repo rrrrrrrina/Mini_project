@@ -22,7 +22,7 @@ public interface ProductDAO {
 	
 	public int getTotalCount(Search search) throws Exception ;
 
-	public void addWishList(WishList wishList) throws Exception;
+	public int addWishList(WishList wishList) throws Exception;
 	
 	public boolean checkWishList(WishList wishList) throws Exception;
 

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper">
+ 	
+ 	
+	<resultMap id="userSelectMap" type="user">
+		<result property="userId" 		column="user_id" 		jdbcType="VARCHAR"/>
+		<result property="userName"		column="user_name" 		jdbcType="VARCHAR" />
+		<result property="password" 	column="password" 		jdbcType="VARCHAR" />
+		<result property="role" 		column="role" 			jdbcType="VARCHAR" />
+		<result property="ssn" 			column="ssn" 			jdbcType="VARCHAR" />
+		<result property="phone" 		column="cell_phone" 	jdbcType="VARCHAR" />
+		<result property="addr" 		column="addr" 			jdbcType="VARCHAR" />
+		<result property="email" 		column="email" 			jdbcType="NUMERIC"  />
+		<result property="regDate" 		column="reg_date" 		jdbcType="DATE" />
+	</resultMap>
+	
+	<resultMap id="messageSelectMap" type="message">
+		<result property="messageNo" 		column="message_no" 		jdbcType="NUMERIC"/>
+		<result property="senderId" 		column="sender_id" 			jdbcType="VARCHAR"/>
+		<result property="receiverId"		column="receiver_id" 		jdbcType="VARCHAR" />
+		<result property="receiveredDate" 	column="receivered_date" 	jdbcType="DATE" />
+		<result property="contents" 		column="contents" 			jdbcType="VARCHAR" />
+		<result property="readDate" 		column="read_date" 			jdbcType="DATE" />
+		<result property="isRead" 			column="is_read" 			jdbcType="VARCHAR" />
+	</resultMap>
+	
+	
+	
+	 <insert 	id="addUser"		parameterType="user" >
+	 	INSERT
+		INTO users( user_id , user_name , password , role , ssn, cell_phone, addr, email , reg_date) 
+		VALUES	 (	#{userId} , #{userName} , #{password} , 'user' , #{ssn:VARCHAR} , 
+							#{phone:VARCHAR} , #{addr:VARCHAR} , #{email:VARCHAR} , SYSDATE )
+	 </insert>
+	 
+	 <insert 	id="sendMessage"		parameterType="message" >
+	 	INSERT 
+		INTO messages (sender_id, receiver_id, receivered_date, contents, is_read, message_no)
+		VALUES ( #{senderId}, #{receiverId}, SYSDATE,  #{contents}, '0', seq_messages_message_no.nextval)
+	 </insert>
+	 
+	 <select 	id="getUser"	parameterType="string"	resultMap="userSelectMap">
+		SELECT
+		user_id , user_name , password , role ,  cell_phone ,  addr , email , reg_date 		
+		FROM users 
+		WHERE user_id = #{value}
+	 </select>
+	 
+	 <select 	id="getMessage"	parameterType="int"	resultMap="messageSelectMap">
+		SELECT
+		message_no, sender_id, receiver_id, receivered_date, REPLACE(contents, CHR(13)||CHR(10),'\n') contents, read_date, is_read
+		FROM messages
+		WHERE message_no=#{messageNo}
+	 </select>
+	 
+	 <update	id="updateUser"	parameterType="user" >
+	   	UPDATE users
+	   	<set>
+	   		user_name 	= #{userName} ,
+			cell_phone	= #{phone},
+			addr 				= #{addr} ,
+			email				=	#{email}
+	   	</set>
+	   	WHERE user_id = #{userId}
+	 </update>
+	 
+	 <update	id="updateMessage"	parameterType="message" >
+	   	UPDATE messages
+	   	<set>
+	   		is_read='1',
+	   		read_date=SYSDATE
+	   	</set>
+	   	WHERE message_no=#{messageNo}
+	 </update>
+	 
+	 <delete id="deleteMessage" parameterType="int">
+	 	DELETE 
+	 	FROM messages
+	 	WHERE message_no=#{messageNo}
+	 </delete>
+		 
+	<select  id="getUserList"  parameterType="search"	resultMap="userSelectMap">
+	  	SELECT *
+	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
+	  					FROM		(	SELECT user_id , user_name , email
+											FROM users
+											<if test="searchCondition != null">
+												<where>
+													<if test="searchCondition == 0 and searchKeyword !='' ">
+										 				user_id = #{searchKeyword}
+													</if>
+													<if test="searchCondition == 1 and searchKeyword !='' ">
+										 				user_name = #{searchKeyword}
+													</if>
+												</where>
+											</if>
+											ORDER BY user_id ) inner_table
+						WHERE ROWNUM &lt;= #{endRowNum} )
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
+	 </select>
+	 
+	 <select  id="getMessageList"  parameterType="search"	resultMap="messageSelectMap">
+	  	SELECT *
+	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
+	  					FROM		(	SELECT *
+											FROM messages
+											<where>
+												<if test="searchMenu=='get'">
+													receiver_id=#{searchKeyword}
+												</if>
+												<if test="searchMenu=='send'">
+													sender_id=#{searchKeyword}
+												</if>
+											</where>
+												<if test="searchCondition==0">
+													ORDER BY receivered_date DESC
+												</if>
+												<if test="searchCondition==1">
+													ORDER BY receivered_date ASC
+												</if>
+											
+											) inner_table
+						WHERE ROWNUM &lt;= #{endRowNum} )
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
+	 </select>
+	 
+	 <select  id="getTotalCount"  parameterType="search"	 resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM(	SELECT user_id , user_name , email
+						FROM users
+						<if test="searchCondition != null">
+							<where>
+								<if test="searchCondition == 0 and searchKeyword !='' ">
+						 			user_id = #{searchKeyword}
+								</if>
+								<if test="searchCondition == 1 and searchKeyword !='' ">
+						 			user_name = #{searchKeyword}
+								</if>
+							</where>
+						</if> ) countTable						
+	 </select>
+	 
+	 <select  id="getTotalMessageCount"  parameterType="search"	 resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM(	SELECT receiver_id
+						FROM messages
+						WHERE
+						<if test="searchMenu=='get'">
+						 	receiver_id = #{searchKeyword}
+						</if>
+						<if test="searchMenu=='send'">
+						 	sender_id = #{searchKeyword}
+						</if> ) countTable						
+	 </select>
+	 
+</mapper>

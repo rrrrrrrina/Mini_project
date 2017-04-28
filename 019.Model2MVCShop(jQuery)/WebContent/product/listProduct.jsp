@@ -54,7 +54,6 @@
 			if(menu=='manage'){
 				destination='<input type="button" value="수정하기" id="fix"/>';
 			}
-			
 			$.ajax( 
 					{
 						url : "/product/getJsonProduct/"+prodNo ,
@@ -79,10 +78,8 @@
 														+wishButton
 														+"</h5>";
 							$("h5").remove();
-							$( "#"+prodName+"" ).html(displayValue);
-							var prodNo=JSONData.product.prodNo;
-							alert(prodNo);
-							
+							$( "#"+prodNo+"" ).html(displayValue);
+							var productNo=JSONData.product.prodNo;
 							if(JSONData.isDuplicate){
 								$('#wishButton').val('찜하기취소');
 							}
@@ -97,7 +94,7 @@
 								if($(this).val()=='찜하기'){
 									$.ajax( 
 											{
-												url : "/product/addJsonWishList/"+prodNo,
+												url : "/product/addJsonWishList/"+productNo,
 												method : "GET" ,
 												dataType : "json" ,
 												headers : {
@@ -107,15 +104,13 @@
 												context : this,
 												success : function(serverData , status) {
 													$(this).val('찜하기취소');
-													alert("dd");
-													alert(serverData.product.countLiked);
-													
+													$(this).parents('td').parents('tr').prev().find('td:last').html(serverData.countLiked);
 												}
 											});
 								}else if($(this).val()=='찜하기취소'){
 									$.ajax( 
 											{
-												url : "/product/deleteJsonWishList/"+prodNo,
+												url : "/product/deleteJsonWishList/"+productNo,
 												method : "GET" ,
 												dataType : "json" ,
 												headers : {
@@ -124,10 +119,7 @@
 												},
 												context : this,
 												success : function(serverData , status) {
-													$(this).val('찜하기');
-													alert(serverData.product.countLiked);
-													alert($( "#"+prodName+"" ).html());
-													
+													$(this).parents('td').parents('tr').prev().find('td:last').html(serverData.countLiked);
 												}
 											});
 								}
@@ -249,7 +241,7 @@
 			  </c:if>
 			  <td id="countLiked">${product.countLiked}</td>
 			  <tr>
-			  <td id="${product.prodName}" colspan="15"></td>
+			  <td id="${product.prodNo}" colspan="15"></td>
 			  </tr>
           </c:forEach>
         </tbody>

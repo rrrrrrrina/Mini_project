@@ -56,8 +56,8 @@ public class ProductServiceImpl implements ProductService{
 		productDAO.updateProduct(product);
 	}
 	
-	public void addWishList(WishList wishList) throws Exception {
-		productDAO.addWishList(wishList);
+	public int addWishList(WishList wishList) throws Exception {
+		return productDAO.addWishList(wishList);
 	}
 
 	public boolean checkWishList(WishList wishList) throws Exception {

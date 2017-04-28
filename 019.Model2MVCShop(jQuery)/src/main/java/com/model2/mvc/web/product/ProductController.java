@@ -99,18 +99,17 @@ public class ProductController {
 	}
 	
 	@RequestMapping(value={"deleteJsonWishList/{productNo}"}, method=RequestMethod.GET)
-	public void deleteJsonWishList( @RequestParam( value="productNo", defaultValue="0") int productNo, HttpSession session, Model model ) throws Exception {
+	public void deleteJsonWishList( @PathVariable int productNo, HttpSession session, Model model ) throws Exception {
 
 		System.out.println("/deleteJsonWishList");
 		WishList wishList=new WishList();
-		
+		int countLiked=0;
+
 		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
 		wishList.setProductNo(productNo);
 		
-		productService.deleteWishList(wishList);
-		Product product=productService.getProduct(productNo);
-		
-		model.addAttribute("product", product);
+		countLiked=productService.deleteWishList(wishList);
+		model.addAttribute("countLiked", countLiked);
 	}
 	
 	@RequestMapping(value="addWishList", method=RequestMethod.POST)
@@ -132,17 +131,17 @@ public class ProductController {
 		
 		System.out.println("/addJsonWishList");
 		WishList wishList=new WishList();
+		int countLiked=0;
 		
 		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
 		wishList.setProductNo(prodNo);
 		
 		if(!productService.checkWishList(wishList)){
-			productService.addWishList(wishList);
+			countLiked=productService.addWishList(wishList);
 		}
 		
-		Product product=productService.getProduct(prodNo);
 		
-		model.addAttribute("product", product);
+		model.addAttribute("countLiked", countLiked);
 	}
 	
 	@RequestMapping(value="getProduct", method=RequestMethod.GET)
