@@ -96,7 +96,15 @@ public class UserController {
 		// Model °ú View ¿¬°á
 		model.addAttribute("user", user);
 	}
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	@RequestMapping( value="getJsonUserIds", method=RequestMethod.GET )
+	public void getJsonUserIds(Model model) throws Exception{
+		
+		System.out.println("/getJsonUserIds");
+		List<String> list = userService.getUserIds();
+		
+		model.addAttribute("list", list);
+	}
 	
 
 	@RequestMapping( value="updateUser", method=RequestMethod.GET )

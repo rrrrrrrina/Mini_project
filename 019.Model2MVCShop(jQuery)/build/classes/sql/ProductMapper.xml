@@ -26,25 +26,24 @@
 		<result property="wishedDate" 	column="wished_date" 			jdbcType="DATE"/>
 		
 		<association property="wishedProd"  javaType="product">
-			<id property="prodNo" column="prod_no" jdbcType="NUMERIC"/>
-			<result property="prodName" column="prod_name" jdbcType="VARCHAR"/>
-			<result property="prodDetail" column="prod_detail" jdbcType="VARCHAR"/>
-			<result property="manuDate" column="manufacture_day" jdbcType="VARCHAR"/>
-			<result property="price" column="price" jdbcType="NUMERIC"/>
-			<result property="fileName" column="image_file" jdbcType="VARCHAR"/>
-			<result property="regDate" column="reg_date" jdbcType="DATE"/>
-			<result property="proTranCode" column="tran_status_code" jdbcType="VARCHAR"/>
+			<id 	property="prodNo" 		column="prod_no" 			jdbcType="NUMERIC"/>
+			<result property="prodName" 	column="prod_name" 			jdbcType="VARCHAR"/>
+			<result property="prodDetail" 	column="prod_detail" 		jdbcType="VARCHAR"/>
+			<result property="manuDate"	 	column="manufacture_day"	jdbcType="VARCHAR"/>
+			<result property="price" 		column="price" 				jdbcType="NUMERIC"/>
+			<result property="fileName" 	column="image_file" 		jdbcType="VARCHAR"/>
+			<result property="regDate" 		column="reg_date" 			jdbcType="DATE"/>
+			<result property="proTranCode" 	column="tran_status_code" 	jdbcType="VARCHAR"/>
 		</association>
 	</resultMap>
 	
-	<resultMap id="commentSelectMap" type="comment">
+	<resultMap id="commentSelectMap" 	type="comment">
 		<result property="commentNo" 	column="comment_no" 		jdbcType="NUMERIC"/>
-		<result property="prodNo"		column="prod_no" 			jdbcType="NUMERIC" />
+		<result property="prodNo"		column="product_no" 		jdbcType="NUMERIC" />
 		<result property="commenterId" 	column="commenter_id" 		jdbcType="NUMERIC" />
 		<result property="commentDate" 	column="comment_date" 		jdbcType="DATE" />
 		<result property="contents" 	column="contents" 			jdbcType="VARCHAR" />
 		<result property="receiverId" 	column="receiver_id" 		jdbcType="VARCHAR" />
-		<result property="isPrivate" 	column="is_private" 		jdbcType="NUMERIC" />
 	</resultMap>
 	
 	 <insert 	id="insertProduct"		parameterType="product" >
@@ -52,6 +51,15 @@
 		INTO 
 		product 
 		VALUES (seq_product_prod_no.nextval, #{prodName}, #{prodDetail}, #{manuDate}, #{price}, #{fileName}, sysdate, #{countLiked} )
+	 </insert>
+	 
+	 <insert 	id="insertComment"		parameterType="comment" useGeneratedKeys="false">
+	 	INSERT 
+		INTO comments ( comment_no, product_no, commenter_id, comment_date, contents, receiver_id) 
+		VALUES (seq_comments_comment_no.nextval, #{prodNo}, #{commenterId}, TO_DATE(SYSDATE, 'YY/MM/DD'), #{contents}, #{receiverId:VARCHAR} )
+		<selectKey keyProperty="commentNo" resultType="Integer" order="AFTER">
+        SELECT seq_comments_comment_no.currval FROM dual
+    	</selectKey>
 	 </insert>
 	 
 	 <insert 	id="insertWishList"		parameterType="wishList" >
@@ -68,6 +76,13 @@
 		WHERE p.prod_no = #{prodNo} AND p.prod_no=t.prod_no(+)
 	 </select>
 	 
+	 <select 	id="getComment"	parameterType="product"	resultMap="commentSelectMap">
+	 	SELECT
+		comment_no, product_no, commenter_id, TO_CHAR(comment_date,'YY-MM-DD') comment_date, contents, receiver_id
+		FROM comments
+		WHERE comment_no = #{commentNo}
+	 </select>
+	 
 	 <update	id="updateProduct"	parameterType="product" >
 		UPDATE product 
 		<set> 
@@ -79,9 +94,8 @@
 	   	</set>
 	   	WHERE prod_no=#{prodNo}
 	 </update>
-		 
-
-	<select  id="getWishList"  parameterType="search"	resultMap="wishListSelectMap">
+	 
+	 <select  id="getWishList"  parameterType="search"	resultMap="wishListSelectMap">
 		SELECT * 
 		FROM (	SELECT inner_table.* , ROWNUM AS row_seq 
 						FROM 		(	SELECT w.product_no, w.customer_id, w.wished_date, p.prod_name, vt.tran_status_code, p.price, p.prod_detail
@@ -133,6 +147,18 @@
 		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
 	 </select>
 	 
+	 <select  id="getCommentList"  parameterType="search"	resultMap="commentSelectMap">
+		SELECT * 
+		FROM (	SELECT inner_table.* , ROWNUM AS row_seq 
+						FROM 		(	SELECT c.commenter_id, TO_CHAR(c.comment_date, 'YY-MM-DD') comment_date, c.contents, c.receiver_id
+										FROM comments c
+										WHERE c.product_no=#{searchKeyword}
+	 									ORDER BY comment_no DESC
+										)inner_table 
+						WHERE ROWNUM &lt;= #{endRowNum} )
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
+	 </select>
+	 
 	 <select id="checkWishList" parameterType="wishList"	resultType="int">
 	 	SELECT COUNT(*)
 	 	FROM(			SELECT product_no 
@@ -180,5 +206,15 @@
 						</where> 
 						) countTable						
 	 </select> 
+	 
+	 <select  id="getTotalCountForComment"  parameterType="search"	 resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM(			SELECT comment_no
+						FROM comments
+						WHERE product_no=#{searchKeyword}
+						) countTable						
+	 </select> 
+	 
+	 
 	 
 </mapper>

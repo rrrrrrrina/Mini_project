@@ -51,6 +51,12 @@
 		WHERE user_id = #{value}
 	 </select>
 	 
+	  <select 	id="getUserIds"	resultType="String">
+		SELECT
+		user_id
+		FROM users
+	 </select>
+	 
 	 <select 	id="getMessage"	parameterType="int"	resultMap="messageSelectMap">
 		SELECT
 		message_no, sender_id, receiver_id, receivered_date, REPLACE(contents, CHR(13)||CHR(10),'\n') contents, read_date, is_read

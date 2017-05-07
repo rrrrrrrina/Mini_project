@@ -48,6 +48,10 @@ public class UserServiceImpl implements UserService{
 	public User getUser(String userId) throws Exception {
 		return userDao.getUser(userId);
 	}
+	
+	public List<String> getUserIds() throws Exception{
+		return userDao.getUserIds();
+	}
 
 	public Map<String , Object > getUserList(Search search) throws Exception {
 		List<User> list= userDao.getUserList(search);

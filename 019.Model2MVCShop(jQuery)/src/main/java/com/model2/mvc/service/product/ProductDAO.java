@@ -28,9 +28,11 @@ public interface ProductDAO {
 
 	public int deleteWishList(WishList wishList);
 	
-	public void addComment(Comment comment) throws Exception;
+	public int addComment(Comment comment) throws Exception;
 	
-	public Map<String , Object> getCommentList(int prodNo) throws Exception;
+	public Comment getComment(int commentNo) throws Exception;
+	
+	public Map<String , Object> getCommentList(Search search) throws Exception;
 	
 	public void updateComment(Comment comment) throws Exception;
 	

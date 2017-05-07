@@ -101,14 +101,26 @@ public class ProductDAOImpl implements ProductDAO {
 		return sqlSession.selectOne("ProductMapper.getTotalCountForWish", temp);
 	}
 	
-	public void addComment(Comment comment) throws Exception {
-		sqlSession.insert("ProductMapper.addComment",comment);
+	public int addComment(Comment comment) throws Exception {
+		return sqlSession.insert("ProductMapper.insertComment",comment);
 	}
 	
-	public Map<String , Object > getCommentList(int prodNo) throws Exception {
+	public Comment getComment(int commentNo) throws Exception{
+		return sqlSession.selectOne("ProductMapper.getComment",commentNo);
+	}
+	
+	public Map<String , Object > getCommentList(Search search) throws Exception {
 		Map<String , Object>  map = new HashMap<String, Object>();
 
-		List<Comment> comment=sqlSession.selectList("ProductMapper.getCommentList", prodNo);
+		List<Comment> comment=sqlSession.selectList("ProductMapper.getCommentList", search);
+		for(int i=0; i<comment.size(); i++){
+			if(comment.get(i).getReceiverId()!=null){
+				comment.get(i).setReceiverId("@"+comment.get(i).getReceiverId()+" ");
+			}else{
+				comment.get(i).setReceiverId("");
+			}
+		}
+		map.put("totalCount", sqlSession.selectOne("ProductMapper.getTotalCountForComment",search));
 		map.put("list", comment);
 		
 		return map;

@@ -2,7 +2,10 @@ package com.model2.mvc.web.product;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +27,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
+import com.model2.mvc.service.domain.Comment;
+import com.model2.mvc.service.domain.Message;
 import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.User;
 import com.model2.mvc.service.domain.WishList;
@@ -41,7 +46,10 @@ public class ProductController {
 	@Autowired
 	@Qualifier("productServiceImpl")
 	private ProductService productService;
-	//setter Method 구현 않음
+	
+	@Autowired
+	@Qualifier("userServiceImpl")
+	private UserService userService;
 		
 	public ProductController(){
 		System.out.println(this.getClass());
@@ -56,6 +64,7 @@ public class ProductController {
 	@Value("#{commonProperties['pageSize']}")
 	//@Value("#{commonProperties['pageSize'] ?: 2}")
 	int pageSize;
+	
 	
 	@RequestMapping(value="addProduct", method=RequestMethod.POST)
 	public String addProduct( @ModelAttribute("product") Product product, HttpServletRequest request, Model model ) throws Exception {
@@ -144,8 +153,45 @@ public class ProductController {
 		model.addAttribute("countLiked", countLiked);
 	}
 	
-	@RequestMapping(value="getProduct", method=RequestMethod.GET)
-	public String getProduct( @ModelAttribute("product") Product product, @RequestParam(value="menu", defaultValue="no") String menu, HttpSession session, Model model ) throws Exception {
+	@RequestMapping(value={"addJsonComment"}, method=RequestMethod.GET)
+	public void addJsonComment( @RequestParam("prodNo") int prodNo, @RequestParam("contents") String contents, HttpSession session, Model model ) throws Exception {
+		
+		System.out.println("/addJsonComment");
+		Comment comment=new Comment();
+		comment.setCommenterId(((User)session.getAttribute("user")).getUserId());
+		comment.setProdNo(prodNo);
+		System.out.println(contents);
+		
+		if(contents.startsWith("@")){
+			String temp[]=(contents.split(" "));
+			comment.setReceiverId(temp[0].substring(1));
+			comment.setContents(contents.substring((contents.indexOf(" "))+1));
+
+			if(!userService.checkDuplication(comment.getReceiverId())){
+				Message message = new Message();
+				message.setContents(comment.getCommenterId()+"님이 댓글에서 회원님을 언급했습니다. 주소 : http://localhost:8080/product/getProduct?prodNo="+prodNo);
+				message.setSenderId("admin");
+				message.setReceiverId(comment.getReceiverId());
+				userService.sendMessage(message);
+			}
+		}else{
+			comment.setContents(contents);
+		}
+		
+		productService.addComment(comment);
+		comment=productService.getComment(comment.getCommentNo());
+		
+		if(comment.getReceiverId()!=null){
+			comment.setReceiverId("@"+comment.getReceiverId()+" ");
+		}else{
+			comment.setReceiverId("");
+		}
+		
+		model.addAttribute("comment", comment);
+	}
+	
+	@RequestMapping(value="getProduct")
+	public String getProduct( @ModelAttribute("product") Product product, @RequestParam(value="menu", defaultValue="no") String menu, HttpSession session, Model model, Search search ) throws Exception {
 		
 		System.out.println("/getProduct");
 		String destination="readProduct.jsp";
@@ -169,8 +215,18 @@ public class ProductController {
 			isDuplicate=false;
 		}
 		
+		if(search.getCurrentPage() ==0 ){
+			search.setCurrentPage(1);
+		}
+		
+		Map<String, Object> map=this.listComment(product.getProdNo(), search);
+		
+		model.addAttribute("list",map.get("list"));
+		model.addAttribute("resultPage", map.get("resultPage"));
+		model.addAttribute("search", map.get("search"));
 		model.addAttribute("product", product2);
 		model.addAttribute("isDuplicate", isDuplicate);
+		
 		return "forward:/product/"+destination;
 	}
 	
@@ -267,5 +323,50 @@ public class ProductController {
 		
 		
 		return modelAndView;
+	}
+	
+	@RequestMapping(value="listComment")
+	public Map<String, Object> listComment(int prodNo, Search search) throws Exception{
+		
+		System.out.println("/listComment");
+		
+		if(search.getCurrentPage() ==0 ){
+			search.setCurrentPage(1);
+		}
+		
+		search.setPageSize(pageSize);
+		search.setSearchKeyword(Integer.toString(prodNo));
+		Map<String , Object> map =productService.getCommentList(search);
+		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
+		
+		map.put("resultPage", resultPage);
+		map.put("search", search);
+		
+		
+		return map;
+	}
+	
+	@RequestMapping(value={"listJsonComment/{prodNo}/{currentPage}"}, method=RequestMethod.GET)
+	public void listJsonComment( @PathVariable int prodNo, @PathVariable int currentPage, Model model ) throws Exception {
+		
+		System.out.println("/listJsonComment");
+		Search search= new Search();
+		
+		if(currentPage==0){
+			search.setCurrentPage(1);
+		}
+		
+		search.setPageSize(pageSize);
+		search.setSearchKeyword(Integer.toString(prodNo));
+		search.setCurrentPage(currentPage+1);
+		
+		Map<String , Object> map =productService.getCommentList(search);
+		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
+		
+		
+		model.addAttribute("list",map.get("list"));
+		model.addAttribute("resultPage", map.get("resultPage"));
+		model.addAttribute("currentPage", search.getCurrentPage());
+		
 	}
 }

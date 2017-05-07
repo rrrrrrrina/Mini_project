@@ -1,5 +1,6 @@
 package com.model2.mvc.service.user;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,5 +33,5 @@ public interface UserService {
 	
 	public void updateMessage(Message message) throws Exception;
  
-
+	public List<String> getUserIds() throws Exception;
 }

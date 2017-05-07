@@ -36,5 +36,7 @@ public interface UserDao {
 	public int getTotalMessageCount(Search search) throws Exception;
 	
 	public void updateMessage(Message message) throws Exception;
+	
+	public List<String> getUserIds() throws Exception;
 
 }

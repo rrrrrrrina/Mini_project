@@ -70,10 +70,15 @@ public class ProductServiceImpl implements ProductService{
 	
 	public void addComment(Comment comment) throws Exception {
 		productDAO.addComment(comment);
+		System.out.println("service"+comment);
 	}
 	
-	public Map<String , Object > getCommentList(int prodNo) throws Exception {
-		Map<String , Object > map=productDAO.getCommentList(prodNo);
+	public Comment getComment(int commentNo) throws Exception {
+		return productDAO.getComment(commentNo);
+	}
+	
+	public Map<String , Object > getCommentList(Search search) throws Exception {
+		Map<String , Object > map=productDAO.getCommentList(search);
 		return map;
 	}
 	

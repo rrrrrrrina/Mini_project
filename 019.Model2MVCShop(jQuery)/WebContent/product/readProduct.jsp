@@ -17,23 +17,32 @@
     <script src="/javascript/bootstrap-dropdownhover.min.js"></script>
     <script src="/javascript/agency.js"></script>
    
-   
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
    
    
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="/css/mystyle.css">
-
+	
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  	<link rel="stylesheet" href="/resources/demos/style.css">
+  	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
 	<script type="text/javascript">
-
+	
+	function fncGetUserList(currentPage) {
+		$("#currentPage").val(currentPage)
+		$("form").attr("method" , "POST").attr("action" , "/product/getProduct").submit();
+	}
 
 	$(function() {
 		
-	
+		var userIds=[];
+		var prodNo=$('#productNo').val();
+		
 		$("#cancel").on("click" , function() {
 			$("form").attr("method" , "POST").attr("action" , "/product/deleteWishList").submit();
 		}); 
@@ -50,10 +59,105 @@
 			history.go(-1);
 		});
 		
-		$("#confirm").on("click" , function() {
-			$("form").attr("method" , "POST").attr("action" , "/product/addComment").submit();
-		}); 
-	});
+		$("#send").on("click" , function() {
+
+			$.ajax( 
+					{
+						url : "/product/addJsonComment",
+						method : "GET" ,
+						dataType : "json" ,
+						headers : {
+							"Accept" : "application/json",
+							"Content-Type" : "application/json"
+						},
+						context : this,
+						data : {
+								contents:$(this).prev().val(),
+								prodNo:prodNo
+								} , 
+						success : function(serverData , status) {
+						
+							var displayValue='<div class="row">'
+											+'<div class="col-xs-4 col-md-2">'
+											+'<td><strong>'+serverData.comment.commenterId+'</strong></td></div>'
+											+'<div class="col-xs-8 col-md-6">'
+											+serverData.comment.receiverId
+											+serverData.comment.contents
+											+'('+serverData.comment.commentDate+')'
+											+'</div></div><hr/>';
+							
+							$("#productNo").after(displayValue);			
+						}
+				});
+		});
+		
+		$( "#contents" ).on("keyup" , function() {
+			var contents=$("#contents").val();
+			if(contents=="@"){
+				getUserIds()
+
+			}
+			
+			function getUserIds(){
+				 $.ajax( 
+							{
+								url : "/user/getJsonUserIds",
+								method : "GET" ,
+								dataType : "json" ,
+								headers : {
+									"Accept" : "application/json",
+									"Content-Type" : "application/json"
+								},
+								context : this,
+								success : function(serverData , status) {
+									for(var i=0; i<serverData.list.length; i++){
+										userIds.push(serverData.list[i]);
+									}
+									$( "#contents" ).autocomplete({
+									      source: userIds,
+									      minLength: 1
+									});
+								}
+					});
+			}
+
+		});
+		
+		$( "#moreComments" ).on("click" , function() {
+			var currentPage=$("#currentPage").val();
+			
+		
+			$.ajax( 
+					{
+						url : "/product/listJsonComment/"+prodNo+"/"+currentPage,
+						method : "GET" ,
+						dataType : "json" ,
+						headers : {
+							"Accept" : "application/json",
+							"Content-Type" : "application/json"
+						},
+						context : this,
+						success : function(serverData , status) {
+							for(var i=0; i<serverData.list.length; i++){
+								var displayValue='<c:forEach var="comment" items="'+serverData.list+'">'
+								+'<div class="row">'
+								+'<div class="col-xs-4 col-md-2">'
+								+'<td><strong>'+serverData.list[i].commenterId+'</strong></td></div>'
+								+'<div class="col-xs-8 col-md-6">'
+								+serverData.list[i].receiverId
+								+serverData.list[i].contents
+								+'</div></div><hr/></c:forEach>';
+
+								$("#moreComments").before(displayValue);
+							} 
+							$("#currentPage").val(serverData.currentPage);
+						}
+					});
+		});
+		
+		
+});
+	
 </script>
 </head>
 
@@ -68,7 +172,9 @@
 	       <h3 class=" text-info">상품상세조회</h3>
 	    </div>	
 	    <div class="formbg">
-		<input type="hidden" value="${product.prodNo}" name="productNo"/>
+		
+		<input type="hidden" value="${search.currentPage}" name="currentPage" id="currentPage"/>
+		
 		<div class="row">
 	  		<div class="col-xs-4 col-md-2"><strong>상품번호</strong></div>
 			<div class="col-xs-8 col-md-4">${product.prodNo}</div>
@@ -120,20 +226,44 @@
 		
 		<div class=formbg>
 			<div class="row">
-				<div class="col-xs-4 col-md-2"><strong>${user.userId}</strong></div>
-				<div class="col-xs-8 col-md-6"><input type="text" id="contents" name="contents" size="40" value="댓글을 남겨주세요."/><br/>
-				<td align="center">비밀글<input type="checkbox" name="chbox" value="${comment.isPrivate}"></td>
-				<button class="search btn-default" id="confirm" >확인</button></div>
-					<%-- <c:set var="i" value="0" />
-		  			<c:forEach var="comment" items="${list}">
-					<c:set var="i" value="${ i+1 }" /> --%>
-						<tr>
-							<%-- <td>${ i }</td> --%>
-							<td id="commenterId">${comment.commenterId}</td>
-							<td id="contents">${comment.contents}</td>
-						</tr>
+				<div class="col-xs-4 col-md-2">
+					<strong>${user.userId}</strong>
+				</div>
+				<div class="ui-widget">
+					<labal for="contents">
+						<div class="col-xs-8 col-md-6">
+							<input type="text" id="contents" name="contents" size="40" value="댓글을 남겨주세요." onFocus="value=''"/>
+							<input type="button" class="search btn-default" id="send" value="확인" >
+						</div>
+					</labal>
+				</div>
 			</div>
+			
+			
+			<hr/>
+			<input type="hidden" value="${product.prodNo}" name="productNo" id="productNo"/>
+			
+			<c:set var="i" value="0" />
+		  	<c:forEach var="comment" items="${list}">
+		  		<c:set var="i" value="${ i+1 }" />
+				<div class="row">
+					<div class="col-xs-4 col-md-2">
+						<td id="commenterId"><strong>${comment.commenterId}</strong></td>
+					</div>
+					<div class="col-xs-8 col-md-6">
+						<c:if test="${!empty comment.receiverId}">
+							${comment.receiverId}
+						</c:if>
+						${comment.contents}(${comment.commentDate})
+					</div>
+				</div>
+				<hr/>
+			</c:forEach>
+ 			
+ 			<input type="hidden" id="i" value="${i}">
+ 			<input type="button" class="search btn-default" id="moreComments" value="더보기" >
 		</div>
+		
 		
 		<div class=formbg>
 			<div class="row">

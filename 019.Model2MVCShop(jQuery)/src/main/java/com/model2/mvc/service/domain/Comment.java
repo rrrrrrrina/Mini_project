@@ -7,10 +7,9 @@ public class Comment {
 	private int commentNo;
 	private int prodNo;
 	private String commenterId;
-	private Date commentDate;
+	private String commentDate;
 	private String contents;
 	private String receiverId;
-	private boolean isPrivate;
 	
 	
 	public int getCommentNo() {
@@ -31,10 +30,10 @@ public class Comment {
 	public void setCommenterId(String commenterId) {
 		this.commenterId = commenterId;
 	}
-	public Date getCommentDate() {
+	public String getCommentDate() {
 		return commentDate;
 	}
-	public void setCommentDate(Date commentDate) {
+	public void setCommentDate(String commentDate) {
 		this.commentDate = commentDate;
 	}
 	public String getContents() {
@@ -49,18 +48,12 @@ public class Comment {
 	public void setReceiverId(String receiverId) {
 		this.receiverId = receiverId;
 	}
-	public boolean isPrivate() {
-		return isPrivate;
-	}
-	public void setPrivate(boolean isPrivate) {
-		this.isPrivate = isPrivate;
-	}
 	
 	@Override
 	public String toString() {
 		return "Comment [commentNo=" + commentNo + ", prodNo=" + prodNo + ", commenterId=" + commenterId
 				+ ", commentDate=" + commentDate + ", contents=" + contents + ", receiverId=" + receiverId
-				+ ", isPrivate=" + isPrivate + "]";
+				+ "]";
 	}
 	
 	
