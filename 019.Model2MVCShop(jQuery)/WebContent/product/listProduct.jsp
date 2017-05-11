@@ -119,6 +119,7 @@
 												},
 												context : this,
 												success : function(serverData , status) {
+													$(this).val('ÂòÇÏ±â');
 													$(this).parents('td').parents('tr').prev().find('td:last').html(serverData.countLiked);
 												}
 											});

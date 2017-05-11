@@ -69,6 +69,12 @@
 		VALUES (#{productNo}, #{customerId}, sysdate)
 	 </insert>
 	 
+	 <delete	id="deleteComment"		parameterType="comment" >
+	 	DELETE
+	 	FROM comments
+	 	WHERE comment_no=#{commentNo}
+	 </delete>
+	 
 	 <select 	id="getProduct"	parameterType="product"	resultMap="productSelectMap">
 	 	SELECT
 		p.*, NVL(t.tran_status_code,0) tran_status_code
@@ -150,7 +156,7 @@
 	 <select  id="getCommentList"  parameterType="search"	resultMap="commentSelectMap">
 		SELECT * 
 		FROM (	SELECT inner_table.* , ROWNUM AS row_seq 
-						FROM 		(	SELECT c.commenter_id, TO_CHAR(c.comment_date, 'YY-MM-DD') comment_date, c.contents, c.receiver_id
+						FROM 		(	SELECT c.comment_no, c.commenter_id, TO_CHAR(c.comment_date, 'YY-MM-DD') comment_date, c.contents, c.receiver_id
 										FROM comments c
 										WHERE c.product_no=#{searchKeyword}
 	 									ORDER BY comment_no DESC

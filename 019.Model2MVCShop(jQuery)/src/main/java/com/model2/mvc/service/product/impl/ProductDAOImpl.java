@@ -113,13 +113,7 @@ public class ProductDAOImpl implements ProductDAO {
 		Map<String , Object>  map = new HashMap<String, Object>();
 
 		List<Comment> comment=sqlSession.selectList("ProductMapper.getCommentList", search);
-		for(int i=0; i<comment.size(); i++){
-			if(comment.get(i).getReceiverId()!=null){
-				comment.get(i).setReceiverId("@"+comment.get(i).getReceiverId()+" ");
-			}else{
-				comment.get(i).setReceiverId("");
-			}
-		}
+		
 		map.put("totalCount", sqlSession.selectOne("ProductMapper.getTotalCountForComment",search));
 		map.put("list", comment);
 		
@@ -130,7 +124,7 @@ public class ProductDAOImpl implements ProductDAO {
 		sqlSession.update("ProductMapper.updateComment",comment);
 	}
 	
-	public int deleteComment(Comment comment) throws Exception {
-		return sqlSession.delete("ProductMapper.deleteComment", comment);
+	public int deleteComment(int commentNo) throws Exception {
+		return sqlSession.delete("ProductMapper.deleteComment", commentNo);
 	}
 }

@@ -87,8 +87,7 @@ public class UserController {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////  추가된 부분 ///////////////////////////////////////////////////////////////
 	@RequestMapping( value="getJsonUser/{userId}", method=RequestMethod.GET )
-	public void getJsonUser(	@PathVariable String userId, 
-									 			Model model) throws Exception{
+	public void getJsonUser( @PathVariable String userId, Model model) throws Exception{
 		
 		System.out.println("/getJsonUser/getUser : GET");
 		//Business Logic
@@ -97,13 +96,18 @@ public class UserController {
 		model.addAttribute("user", user);
 	}
 	
-	@RequestMapping( value="getJsonUserIds", method=RequestMethod.GET )
-	public void getJsonUserIds(Model model) throws Exception{
+	@RequestMapping( value="getJsonUserIds/{gotResult}", method=RequestMethod.GET )
+	public void getJsonUserIds( @PathVariable int gotResult, Model model) throws Exception{
 		
 		System.out.println("/getJsonUserIds");
-		List<String> list = userService.getUserIds();
-		
-		model.addAttribute("list", list);
+		System.out.println(gotResult);
+		if(gotResult==0){
+			List<String> list = userService.getUserIds();
+			model.addAttribute("list", list);
+			gotResult++;
+		}else{
+			model.addAttribute("gotResult",gotResult);
+		}
 	}
 	
 

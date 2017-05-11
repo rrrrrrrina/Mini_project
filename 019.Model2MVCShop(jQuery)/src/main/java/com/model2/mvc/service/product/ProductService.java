@@ -33,6 +33,6 @@ public interface ProductService {
 	
 	public void updateComment(Comment comment) throws Exception;
 	
-	public int deleteComment(Comment comment) throws Exception;
+	public int deleteComment(int commentNo) throws Exception;
 	
 }

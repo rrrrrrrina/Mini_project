@@ -86,8 +86,8 @@ public class ProductServiceImpl implements ProductService{
 		productDAO.updateComment(comment);
 	}
 	
-	public int deleteComment(Comment comment) throws Exception {
-		return productDAO.deleteComment(comment);
+	public int deleteComment(int commentNo) throws Exception {
+		return productDAO.deleteComment(commentNo);
 	}
 
 }

@@ -8,14 +8,16 @@
 	
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
-	
-   <link href="/css/animate.min.css" rel="stylesheet">
-   <link href="/css/bootstrap-dropdownhover.min.css" rel="stylesheet">
-   <script src="/javascript/bootstrap-dropdownhover.min.js"></script>
-   <script src="/javascript/agency.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    
+    <link href="/css/animate.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-dropdownhover.min.css" rel="stylesheet">
+    <script src="/javascript/bootstrap-dropdownhover.min.js"></script>
+    <script src="/javascript/agency.js"></script>
    
    
-   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
@@ -46,6 +48,12 @@
 
 </script>
 </head>
+
+<style>
+.bodycss{
+	text-align:left;
+}
+</style>
 
 <body class="bodycss">
 
@@ -85,7 +93,10 @@
 		          </c:forEach>
 		        </tbody>
 		      </table>
-				<div class="form-group">
+		      <br/><br/>
+		      
+		      <div class="formbg">
+					<div class="form-group">
 						<div class="row">
 							<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">구매자아이디</label>
 							<div class="col-xs-8 col-md-4">${user.userId}</div>
@@ -95,10 +106,9 @@
 					<div class="form-group">
 				    	<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">구매방법</label>
 						    <div class="col-sm-4">
-								<select 	name="paymentOption"		class="ct_input_g" 
-											style="width: 100px; height: 19px" maxLength="20">
-									<option value="1" selected="selected">현금구매</option>
-									<option value="2">신용구매</option>
+								<select name="paymentOption" class="ct_input_g" style="width: 100px; height: 28px; color:black" maxLength="20">
+									<option style="color:black" value="1" selected="selected">현금구매</option>
+									<option style="color:black" value="2">신용구매</option>
 								</select>
 						    </div>
 				    </div>
@@ -107,7 +117,7 @@
 					    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">구매자이름</label>
 						    <div class="col-sm-4">
 								<input type="text" name="receiverName" class="ct_input_g" 
-											style="width: 200px; height: 19px" maxLength="13" value="${user.userName}"/>  
+											style="width: 200px;" maxLength="13" value="${user.userName}"/>  
 						    </div>
 				    </div>
 				    
@@ -115,7 +125,7 @@
 					    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">구매자연락처</label>
 						    <div class="col-sm-4">
 								<input type="text" name="receiverPhone" class="ct_input_g" 
-											style="width: 200px; height: 19px" maxLength="13" value="${user.phone}"/>  
+											style="width: 200px;" maxLength="13" value="${user.phone}"/>  
 						    </div>
 				    </div>
 				    
@@ -123,7 +133,7 @@
 					    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">구매자주소</label>
 						    <div class="col-sm-4">
 								<input type="text" name="divyAddr" class="ct_input_g" 
-											style="width: 200px; height: 19px" maxLength="13" value="${user.addr}"/>  
+											style="width: 400px;" maxLength="13" value="${user.addr}"/>  
 						    </div>
 				    </div>
 				    
@@ -131,7 +141,7 @@
 					    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">구매요청사항</label>
 						    <div class="col-sm-4">
 								<input type="text" name="divyRequest" class="ct_input_g" 
-											style="width: 200px; height: 19px" maxLength="13" value=""/>  
+											style="width: 500px;" maxLength="13" value=""/>  
 						    </div>
 				    </div>
 				    
@@ -141,6 +151,8 @@
 				    			<p><input type="text" id="datepicker" name="divyDate" ></p>
 				    		</div>
 				  	</div>
+				  </div>
+				  <br/>	
 				  	
 				  	<div class="form-group">
 				   		<div class="col-sm-offset-4  col-sm-4 text-center">

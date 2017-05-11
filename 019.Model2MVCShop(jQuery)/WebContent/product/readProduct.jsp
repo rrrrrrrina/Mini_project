@@ -27,9 +27,10 @@
 	<link rel="stylesheet" type="text/css" href="/css/mystyle.css">
 	
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  	<link rel="stylesheet" href="/resources/demos/style.css">
+  	<link rel="stylesheet" type="text/css" href="../css/font-awesome/css/font-awesome.min.css">
   	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  	
 	
 	<script type="text/javascript">
 	
@@ -38,10 +39,12 @@
 		$("form").attr("method" , "POST").attr("action" , "/product/getProduct").submit();
 	}
 
+
 	$(function() {
 		
 		var userIds=[];
 		var prodNo=$('#productNo').val();
+		var gotResult=0;
 		
 		$("#cancel").on("click" , function() {
 			$("form").attr("method" , "POST").attr("action" , "/product/deleteWishList").submit();
@@ -77,16 +80,21 @@
 								} , 
 						success : function(serverData , status) {
 						
-							var displayValue='<div class="row">'
+							var displayValue='<span id="'+serverData.comment.commentNo+'">'
+											+'<div class="row">'
 											+'<div class="col-xs-4 col-md-2">'
 											+'<td><strong>'+serverData.comment.commenterId+'</strong></td></div>'
 											+'<div class="col-xs-8 col-md-6">'
 											+serverData.comment.receiverId
 											+serverData.comment.contents
 											+'('+serverData.comment.commentDate+')'
-											+'</div></div><hr/>';
+											+'<i class="fa fa-times-circle-o" style="margin:10"></i>'
+											+'<input type="hidden" id="commentNo" name="commentNo" value="'+serverData.comment.commentNo+'">'
+											+'</div></div></span>';
 							
-							$("#productNo").after(displayValue);			
+							$("#productNo").after(displayValue);
+							$("#contents").val("");
+							
 						}
 				});
 		});
@@ -95,37 +103,41 @@
 			var contents=$("#contents").val();
 			if(contents=="@"){
 				getUserIds()
-
 			}
 			
 			function getUserIds(){
-				 $.ajax( 
-							{
-								url : "/user/getJsonUserIds",
-								method : "GET" ,
-								dataType : "json" ,
-								headers : {
-									"Accept" : "application/json",
-									"Content-Type" : "application/json"
-								},
-								context : this,
-								success : function(serverData , status) {
-									for(var i=0; i<serverData.list.length; i++){
-										userIds.push(serverData.list[i]);
+					 $.ajax( 
+								{
+									url : "/user/getJsonUserIds/"+gotResult,
+									method : "GET" ,
+									dataType : "json" ,
+									headers : {
+										"Accept" : "application/json",
+										"Content-Type" : "application/json"
+									},
+									context : this,
+									success : function(serverData , status) {
+										if(gotResult==0){
+											for(var i=0; i<serverData.list.length; i++){
+												userIds.push("@"+serverData.list[i]+" ");
+											}
+										}
+										gotResult=serverData.gotResult;
 									}
-									$( "#contents" ).autocomplete({
-									      source: userIds,
-									      minLength: 1
-									});
-								}
-					});
-			}
+						});
+				}
+			
+
+			$( "#contents" ).autocomplete({
+			      source: userIds,
+			      minLength: 1
+			});
+			
 
 		});
 		
 		$( "#moreComments" ).on("click" , function() {
 			var currentPage=$("#currentPage").val();
-			
 		
 			$.ajax( 
 					{
@@ -140,22 +152,42 @@
 						success : function(serverData , status) {
 							for(var i=0; i<serverData.list.length; i++){
 								var displayValue='<c:forEach var="comment" items="'+serverData.list+'">'
+								+'<span id="'+serverData.list[i].commentNo+'">'
 								+'<div class="row">'
 								+'<div class="col-xs-4 col-md-2">'
 								+'<td><strong>'+serverData.list[i].commenterId+'</strong></td></div>'
 								+'<div class="col-xs-8 col-md-6">'
 								+serverData.list[i].receiverId
-								+serverData.list[i].contents
-								+'</div></div><hr/></c:forEach>';
+								+serverData.list[i].contents+'('+serverData.list[i].commentDate+')'
+								+'<i class="fa fa-times-circle-o" style="margin:10"></i>'
+								+'<input type="hidden" id="commentNo" name="commentNo" value="'+serverData.list[i].commentNo+'">'
+								+'</div></div></span></c:forEach>';
 
 								$("#moreComments").before(displayValue);
 							} 
 							$("#currentPage").val(serverData.currentPage);
 						}
-					});
+				});
 		});
 		
-		
+		$('body').on('click' , '.fa-times-circle-o', function() {
+			var commentNo=$(this).next().val();
+			
+			$.ajax( 
+					{
+						url : "/product/deleteComment/"+commentNo,
+						method : "GET" ,
+						dataType : "json" ,
+						headers : {
+							"Accept" : "application/json",
+							"Content-Type" : "application/json"
+						},
+						context : this,
+						success : function(serverData , status) {
+							$( "#"+serverData.commentNo+"" ).remove();
+						}
+					});
+		});
 });
 	
 </script>
@@ -224,7 +256,9 @@
 		<hr/>
 		</div>
 		
-		<div class=formbg>
+		<br/>
+		
+		<div class="formbg">
 			<div class="row">
 				<div class="col-xs-4 col-md-2">
 					<strong>${user.userId}</strong>
@@ -239,33 +273,34 @@
 				</div>
 			</div>
 			
-			
-			<hr/>
 			<input type="hidden" value="${product.prodNo}" name="productNo" id="productNo"/>
+			
 			
 			<c:set var="i" value="0" />
 		  	<c:forEach var="comment" items="${list}">
 		  		<c:set var="i" value="${ i+1 }" />
-				<div class="row">
-					<div class="col-xs-4 col-md-2">
-						<td id="commenterId"><strong>${comment.commenterId}</strong></td>
+		  		<span id="${comment.commentNo}">
+					<div class="row">
+						<div class="col-xs-4 col-md-2">
+							<td id="commenterId"><strong>${comment.commenterId}</strong></td>
+						</div>
+						<div class="col-xs-8 col-md-6">
+							<c:if test="${!empty comment.receiverId}">
+								${comment.receiverId}
+							</c:if>
+							${comment.contents}(${comment.commentDate})
+	  						<i class="fa fa-times-circle-o" style="margin:10"></i>
+	  						<input type="hidden" id="commentNo" name="commentNo" value="${comment.commentNo}">
+						</div>
 					</div>
-					<div class="col-xs-8 col-md-6">
-						<c:if test="${!empty comment.receiverId}">
-							${comment.receiverId}
-						</c:if>
-						${comment.contents}(${comment.commentDate})
-					</div>
-				</div>
-				<hr/>
+				</span>
 			</c:forEach>
  			
- 			<input type="hidden" id="i" value="${i}">
  			<input type="button" class="search btn-default" id="moreComments" value="´õº¸±â" >
 		</div>
 		
+		<br/>
 		
-		<div class=formbg>
 			<div class="row">
 		  		<div class="col-md-12 text-center ">
 		  			<c:if test='${isDuplicate}'>
@@ -283,7 +318,6 @@
 		</div>
 		
 	  <br/>
- 	</div>
  	</form>
 </body>
 </html>

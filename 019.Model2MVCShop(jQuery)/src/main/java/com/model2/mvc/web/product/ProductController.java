@@ -121,6 +121,16 @@ public class ProductController {
 		model.addAttribute("countLiked", countLiked);
 	}
 	
+	@RequestMapping(value={"deleteComment/{commentNo}"}, method=RequestMethod.GET)
+	public void deleteComment( @PathVariable int commentNo,Model model ) throws Exception {
+
+		System.out.println("/deleteComment");
+		
+		productService.deleteComment(commentNo);
+		
+		model.addAttribute("commentNo","1");
+	}
+	
 	@RequestMapping(value="addWishList", method=RequestMethod.POST)
 	public String addWishList( @ModelAttribute("wishList") WishList wishList, HttpSession session, Model model ) throws Exception {
 		
