@@ -16,7 +16,8 @@ public class Product {
 	private Date regDate;
 	private String proTranCode;
 	private int countLiked;
-	MultipartFile file;
+	private String oriFileName;
+	private String newFileName;
 	
 	public Product(){
 	}
@@ -81,19 +82,28 @@ public class Product {
 		this.countLiked = countLiked;
 	}
 
-	public MultipartFile getFile() {
-		return file;
+	public String getOriFileName() {
+		return oriFileName;
 	}
 
-	public void setFile(MultipartFile file) {
-		this.file = file;
+	public void setOriFileName(String oriFileName) {
+		this.oriFileName = oriFileName;
+	}
+
+	public String getNewFileName() {
+		return newFileName;
+	}
+
+	public void setNewFileName(String newFileName) {
+		this.newFileName = newFileName;
 	}
 
 	@Override
 	public String toString() {
 		return "Product [fileName=" + fileName + ", manuDate=" + manuDate + ", price=" + price + ", prodDetail="
 				+ prodDetail + ", prodName=" + prodName + ", prodNo=" + prodNo + ", regDate=" + regDate
-				+ ", proTranCode=" + proTranCode + ", countLiked=" + countLiked + "]";
+				+ ", proTranCode=" + proTranCode + ", countLiked=" + countLiked + ", oriFileName=" + oriFileName
+				+ ", newFileName=" + newFileName + "]";
 	}
 
 }

@@ -35,8 +35,6 @@
 		var manuDate = $("input[name='manuDate']").val();
 		var price = $("input[name='price']").val();
 		
-		alert(name+detail+manuDate+price);
-		
 		if(name == null || name.length<1){
 			alert("상품명은 반드시 입력하여야 합니다.");
 			return;
@@ -53,7 +51,7 @@
 			alert("가격은 반드시 입력하셔야 합니다.");
 			return;
 		}
-		
+		alert($("#fileName").val());
 		$("form").attr("method" , "POST").attr("action" , "/product/addProduct").submit();
 	
 	}
@@ -89,7 +87,7 @@
 		</div>	
 	    <div class="formbg">
 
-		<form class="form-horizontal">
+		<form class="form-horizontal" enctype="multipart/form-data">
 		
 		  <div class="row">
 		  	<div class="col-xs-4 col-md-2"><strong>상품명</strong></div>
@@ -114,14 +112,14 @@
 		  
 		  <div class="row">
 		  	<div class="col-xs-4 col-md-2"><strong>가격</strong></div>
-		    <div class="col-xs-8 col-md-4""><input type="text" name="price">&nbsp;원</div>
+		    <div class="col-xs-8 col-md-4"><input type="text" name="price">&nbsp;원</div>
 		  </div>
 		  
 		  <hr/>
 		  
 		  <div class="row">
 		  	<div class="col-xs-4 col-md-2"><strong>상품이미지</strong></div>
-		    <div class="col-xs-8 col-md-4"><input type="file" name="fileName"/></div>
+		    <div class="col-xs-8 col-md-4"><input type="file" name="fileName[]" id="fileName" multiple/></div>
 		  </div>
 		  
 		  <hr/>

@@ -6,8 +6,10 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.model2.mvc.common.Page;
@@ -67,20 +71,37 @@ public class ProductController {
 	
 	
 	@RequestMapping(value="addProduct", method=RequestMethod.POST)
-	public String addProduct( @ModelAttribute("product") Product product, HttpServletRequest request, Model model ) throws Exception {
+	public String addProduct( @ModelAttribute("product") Product product, MultipartHttpServletRequest multi, Model model ) throws Exception {
 
 		System.out.println("/addProduct");
-		System.out.println("/addProductControll³»:"+product);
 		
-		//File file=new File("C:\\Users\\BitCamp\\git\\017PJT\\017.Model2MVCShop(URI,pattern)\\WebContent\\images\\uploadFiles\\"+product.getFile().getOriginalFilename());
+		String root=multi.getSession().getServletContext().getRealPath("/");
+		String path=root+"images/uploadFiles/";
+		System.out.println("root:++++++++++++++++:"+path);
+		File dir=new File(path);
+		if(!dir.isDirectory()){
+			dir.mkdir();
+		}
 		
-		/*try{
-			product.getFile().transferTo(file);
-		}catch(IOException e){
-			e.printStackTrace();
-		}*/
+		Iterator<String> files=multi.getFileNames();
+		System.out.println(files);
 		
-		productService.addProduct(product);
+		while(files.hasNext()){
+			String uploadFile=files.next();
+			
+			MultipartFile file=multi.getFile(uploadFile);
+			String oriFileName=file.getOriginalFilename();
+			String newFileName=UUID.randomUUID().toString()+"."+oriFileName.substring(oriFileName.lastIndexOf(".")+1);
+			
+			file.transferTo(new File(root+newFileName));
+			
+			product.setOriFileName(oriFileName);
+			product.setNewFileName(newFileName);
+			
+			System.out.println(oriFileName+":dddddddd:"+newFileName);
+		}
+		
+		//productService.addProduct(product);
 		
 		model.addAttribute("product", product);
 		
@@ -112,12 +133,11 @@ public class ProductController {
 
 		System.out.println("/deleteJsonWishList");
 		WishList wishList=new WishList();
-		int countLiked=0;
 
 		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
 		wishList.setProductNo(productNo);
 		
-		countLiked=productService.deleteWishList(wishList);
+		int countLiked=productService.deleteWishList(wishList);
 		model.addAttribute("countLiked", countLiked);
 	}
 	
@@ -128,15 +148,14 @@ public class ProductController {
 		
 		productService.deleteComment(commentNo);
 		
-		model.addAttribute("commentNo","1");
 	}
 	
 	@RequestMapping(value="addWishList", method=RequestMethod.POST)
 	public String addWishList( @ModelAttribute("wishList") WishList wishList, HttpSession session, Model model ) throws Exception {
 		
-		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
-		
 		System.out.println("/addWishList");
+
+		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
 		
 		if(!productService.checkWishList(wishList)){
 			productService.addWishList(wishList);
@@ -150,17 +169,13 @@ public class ProductController {
 		
 		System.out.println("/addJsonWishList");
 		WishList wishList=new WishList();
-		int countLiked=0;
 		
 		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
 		wishList.setProductNo(prodNo);
 		
 		if(!productService.checkWishList(wishList)){
-			countLiked=productService.addWishList(wishList);
+			model.addAttribute("countLiked",productService.addWishList(wishList));
 		}
-		
-		
-		model.addAttribute("countLiked", countLiked);
 	}
 	
 	@RequestMapping(value={"addJsonComment"}, method=RequestMethod.GET)
@@ -170,7 +185,6 @@ public class ProductController {
 		Comment comment=new Comment();
 		comment.setCommenterId(((User)session.getAttribute("user")).getUserId());
 		comment.setProdNo(prodNo);
-		System.out.println(contents);
 		
 		if(contents.startsWith("@")){
 			String temp[]=(contents.split(" "));
@@ -204,23 +218,27 @@ public class ProductController {
 	public String getProduct( @ModelAttribute("product") Product product, @RequestParam(value="menu", defaultValue="no") String menu, HttpSession session, Model model, Search search ) throws Exception {
 		
 		System.out.println("/getProduct");
+		
 		String destination="readProduct.jsp";
 		boolean isDuplicate=true;
-		Product product2=productService.getProduct(product.getProdNo());
+		int prodNo=product.getProdNo();
+		
+		Product product2=productService.getProduct(prodNo);
 		product2.setProTranCode(product.getProTranCode());
+		
 		if(menu.equals("manage")){
 			destination="updateProductView.jsp";
 		}else if(menu.equals("search")){
 			session.getAttribute("user");
 
 			List<Integer> history=(ArrayList<Integer>)session.getAttribute("history");
-			history.add(product.getProdNo());
+			history.add(prodNo);
 			session.setAttribute("history", history);
 		}
 
 		WishList wishList=new WishList();
 		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
-		wishList.setProductNo(product.getProdNo());
+		wishList.setProductNo(prodNo);
 		if(!productService.checkWishList(wishList)){
 			isDuplicate=false;
 		}
@@ -229,7 +247,7 @@ public class ProductController {
 			search.setCurrentPage(1);
 		}
 		
-		Map<String, Object> map=this.listComment(product.getProdNo(), search);
+		Map<String, Object> map=this.listComment(prodNo, search);
 		
 		model.addAttribute("list",map.get("list"));
 		model.addAttribute("resultPage", map.get("resultPage"));
@@ -351,7 +369,6 @@ public class ProductController {
 		
 		map.put("resultPage", resultPage);
 		map.put("search", search);
-		
 		
 		return map;
 	}
