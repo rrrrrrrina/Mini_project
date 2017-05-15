@@ -71,37 +71,28 @@ public class ProductController {
 	
 	
 	@RequestMapping(value="addProduct", method=RequestMethod.POST)
-	public String addProduct( @ModelAttribute("product") Product product, MultipartHttpServletRequest multi, Model model ) throws Exception {
+	public String addProduct( @ModelAttribute("product") Product product, HttpSession session, Model model ) throws Exception {
 
 		System.out.println("/addProduct");
 		
-		String root=multi.getSession().getServletContext().getRealPath("/");
-		String path=root+"images/uploadFiles/";
-		System.out.println("root:++++++++++++++++:"+path);
-		File dir=new File(path);
-		if(!dir.isDirectory()){
-			dir.mkdir();
-		}
-		
-		Iterator<String> files=multi.getFileNames();
-		System.out.println(files);
-		
-		while(files.hasNext()){
-			String uploadFile=files.next();
-			
-			MultipartFile file=multi.getFile(uploadFile);
-			String oriFileName=file.getOriginalFilename();
-			String newFileName=UUID.randomUUID().toString()+"."+oriFileName.substring(oriFileName.lastIndexOf(".")+1);
-			
-			file.transferTo(new File(root+newFileName));
-			
-			product.setOriFileName(oriFileName);
-			product.setNewFileName(newFileName);
-			
-			System.out.println(oriFileName+":dddddddd:"+newFileName);
-		}
-		
-		//productService.addProduct(product);
+		List<MultipartFile> files = product.getImages();
+        List<String> fileNames = new ArrayList<String>();
+        if (null != files && files.size() > 0) 
+        {
+            for (MultipartFile multipartFile : files) {
+ 
+                String fileName = multipartFile.getOriginalFilename();
+                String newFileName=UUID.randomUUID().toString()+"."+fileName.substring(fileName.lastIndexOf(".")+1);
+                
+                fileNames.add(newFileName);
+ 
+                File imageFile = new File(session.getServletContext().getRealPath("/")+"images/uploadFiles/", newFileName);
+                multipartFile.transferTo(imageFile);
+                product.setFileName(newFileName);
+            }
+        }
+        
+        productService.addProduct(product);
 		
 		model.addAttribute("product", product);
 		
@@ -182,34 +173,27 @@ public class ProductController {
 	public void addJsonComment( @RequestParam("prodNo") int prodNo, @RequestParam("contents") String contents, HttpSession session, Model model ) throws Exception {
 		
 		System.out.println("/addJsonComment");
+		
 		Comment comment=new Comment();
 		comment.setCommenterId(((User)session.getAttribute("user")).getUserId());
 		comment.setProdNo(prodNo);
 		
-		if(contents.startsWith("@")){
-			String temp[]=(contents.split(" "));
+		String temp[]=(contents.split(" "));
+		
+		if(temp[0].startsWith("@") && !userService.checkDuplication(temp[0].substring(1))){
 			comment.setReceiverId(temp[0].substring(1));
 			comment.setContents(contents.substring((contents.indexOf(" "))+1));
-
-			if(!userService.checkDuplication(comment.getReceiverId())){
-				Message message = new Message();
-				message.setContents(comment.getCommenterId()+"님이 댓글에서 회원님을 언급했습니다. 주소 : http://localhost:8080/product/getProduct?prodNo="+prodNo);
-				message.setSenderId("admin");
-				message.setReceiverId(comment.getReceiverId());
-				userService.sendMessage(message);
-			}
+			Message message = new Message();
+			message.setContents(comment.getCommenterId()+"님이 댓글에서 회원님을 언급했습니다. 주소 : http://localhost:8080/product/getProduct?prodNo="+prodNo);
+			message.setSenderId("admin");
+			message.setReceiverId(comment.getReceiverId());
+			userService.sendMessage(message);
 		}else{
 			comment.setContents(contents);
 		}
 		
 		productService.addComment(comment);
 		comment=productService.getComment(comment.getCommentNo());
-		
-		if(comment.getReceiverId()!=null){
-			comment.setReceiverId("@"+comment.getReceiverId()+" ");
-		}else{
-			comment.setReceiverId("");
-		}
 		
 		model.addAttribute("comment", comment);
 	}
@@ -292,6 +276,21 @@ public class ProductController {
 		System.out.println("/updateProduct");
 		productService.updateProduct(product);
 		return "redirect:/product/getProduct?prodNo="+product.getProdNo();
+	}
+	
+	@RequestMapping(value="updateJsonComment/{commentNo}")
+	public void updateJsonComment( @PathVariable int commentNo, @RequestParam("changedContents") String contents, Model model ) throws Exception{
+
+		System.out.println("/updateJsonComment");
+		
+		Comment comment=new Comment();
+		comment.setCommentNo(commentNo);
+		comment.setContents(contents);
+		
+		productService.updateComment(comment);
+		comment=productService.getComment(commentNo);
+		
+		model.addAttribute("comment", comment);
 	}
 	
 	@RequestMapping(value="listProduct")
@@ -396,4 +395,6 @@ public class ProductController {
 		model.addAttribute("currentPage", search.getCurrentPage());
 		
 	}
+	
+	
 }

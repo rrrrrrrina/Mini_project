@@ -23,7 +23,7 @@
 	<resultMap id="wishListSelectMap" type="wishList">
 		<result property="customerId" 	column="customer_id" 		jdbcType="VARCHAR"/>
 		<result property="productNo" 	column="product_no" 		jdbcType="NUMERIC"/>
-		<result property="wishedDate" 	column="wished_date" 			jdbcType="DATE"/>
+		<result property="wishedDate" 	column="wished_date" 		jdbcType="DATE"/>
 		
 		<association property="wishedProd"  javaType="product">
 			<id 	property="prodNo" 		column="prod_no" 			jdbcType="NUMERIC"/>
@@ -44,6 +44,7 @@
 		<result property="commentDate" 	column="comment_date" 		jdbcType="DATE" />
 		<result property="contents" 	column="contents" 			jdbcType="VARCHAR" />
 		<result property="receiverId" 	column="receiver_id" 		jdbcType="VARCHAR" />
+		<result property="isFixed" 		column="is_fixed" 			jdbcType="NUMERIC" />
 	</resultMap>
 	
 	 <insert 	id="insertProduct"		parameterType="product" >
@@ -55,8 +56,8 @@
 	 
 	 <insert 	id="insertComment"		parameterType="comment" useGeneratedKeys="false">
 	 	INSERT 
-		INTO comments ( comment_no, product_no, commenter_id, comment_date, contents, receiver_id) 
-		VALUES (seq_comments_comment_no.nextval, #{prodNo}, #{commenterId}, TO_DATE(SYSDATE, 'YY/MM/DD'), #{contents}, #{receiverId:VARCHAR} )
+		INTO comments ( comment_no, product_no, commenter_id, comment_date, contents, is_fixed, receiver_id) 
+		VALUES (seq_comments_comment_no.nextval, #{prodNo}, #{commenterId}, TO_DATE(SYSDATE, 'YY/MM/DD'), #{contents}, 0, #{receiverId:VARCHAR} )
 		<selectKey keyProperty="commentNo" resultType="Integer" order="AFTER">
         SELECT seq_comments_comment_no.currval FROM dual
     	</selectKey>
@@ -84,7 +85,7 @@
 	 
 	 <select 	id="getComment"	parameterType="product"	resultMap="commentSelectMap">
 	 	SELECT
-		comment_no, product_no, commenter_id, TO_CHAR(comment_date,'YY-MM-DD') comment_date, contents, receiver_id
+		comment_no, product_no, commenter_id, TO_CHAR(comment_date,'YY-MM-DD') comment_date, contents, is_fixed, receiver_id
 		FROM comments
 		WHERE comment_no = #{commentNo}
 	 </select>
@@ -99,6 +100,16 @@
 		image_file=#{fileName} 
 	   	</set>
 	   	WHERE prod_no=#{prodNo}
+	 </update>
+	 
+	 <update	id="updateComment"	parameterType="comment" >
+		UPDATE comments 
+		<set> 
+		is_fixed=1,
+		contents=#{contents},
+		comment_date=TO_DATE(SYSDATE,'YY-MM-DD')
+	   	</set>
+	   	WHERE comment_no=#{commentNo}
 	 </update>
 	 
 	 <select  id="getWishList"  parameterType="search"	resultMap="wishListSelectMap">
@@ -156,7 +167,7 @@
 	 <select  id="getCommentList"  parameterType="search"	resultMap="commentSelectMap">
 		SELECT * 
 		FROM (	SELECT inner_table.* , ROWNUM AS row_seq 
-						FROM 		(	SELECT c.comment_no, c.commenter_id, TO_CHAR(c.comment_date, 'YY-MM-DD') comment_date, c.contents, c.receiver_id
+						FROM 		(	SELECT c.comment_no, c.commenter_id, TO_CHAR(c.comment_date, 'YY-MM-DD') comment_date, c.contents, c.is_fixed, c.receiver_id
 										FROM comments c
 										WHERE c.product_no=#{searchKeyword}
 	 									ORDER BY comment_no DESC

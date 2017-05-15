@@ -1,6 +1,5 @@
 package com.model2.mvc.service.domain;
 
-import java.util.Date;
 
 public class Comment {
 	
@@ -10,6 +9,7 @@ public class Comment {
 	private String commentDate;
 	private String contents;
 	private String receiverId;
+	private int isFixed;
 	
 	
 	public int getCommentNo() {
@@ -48,13 +48,20 @@ public class Comment {
 	public void setReceiverId(String receiverId) {
 		this.receiverId = receiverId;
 	}
-	
+	public int getIsFixed() {
+		return isFixed;
+	}
+	public void setIsFixed(int isFixed) {
+		this.isFixed = isFixed;
+	}
 	@Override
 	public String toString() {
 		return "Comment [commentNo=" + commentNo + ", prodNo=" + prodNo + ", commenterId=" + commenterId
 				+ ", commentDate=" + commentDate + ", contents=" + contents + ", receiverId=" + receiverId
-				+ "]";
+				+ ", isFixed=" + isFixed + "]";
 	}
+	
+	
 	
 	
 

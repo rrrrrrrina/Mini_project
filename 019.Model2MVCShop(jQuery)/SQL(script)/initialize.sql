@@ -14,10 +14,11 @@ CREATE SEQUENCE seq_comments_comment_no		INCREMENT BY 1 START WITH 10000;
 CREATE TABLE comments ( 
 	comment_no			NUMBER 			NOT NULL,
 	product_no			NUMBER 			NOT NULL,
-	commenter_id 		VARCHAR2(50)		NOT NULL,
+	commenter_id 		VARCHAR2(50)	NOT NULL,
 	comment_date 		DATE,
 	contents 			VARCHAR2(1000),
 	receiver_id 		VARCHAR2(50),
+	is_fixed			NUMBER			NOT NULL,
 	PRIMARY KEY(comment_no)
 );
 

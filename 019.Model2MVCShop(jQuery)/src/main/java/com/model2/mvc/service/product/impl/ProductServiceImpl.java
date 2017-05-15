@@ -1,5 +1,6 @@
 package com.model2.mvc.service.product.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,15 +71,23 @@ public class ProductServiceImpl implements ProductService{
 	
 	public void addComment(Comment comment) throws Exception {
 		productDAO.addComment(comment);
-		System.out.println("service"+comment);
 	}
 	
 	public Comment getComment(int commentNo) throws Exception {
-		return productDAO.getComment(commentNo);
+		Comment comment=productDAO.getComment(commentNo);
+		comment.setReceiverId(changeReceiverId(comment.getReceiverId()));
+		
+		return comment;
 	}
 	
 	public Map<String , Object > getCommentList(Search search) throws Exception {
 		Map<String , Object > map=productDAO.getCommentList(search);
+		
+		List<Comment> list=(List<Comment>) map.get("list");
+		for(int i=0; i<list.size(); i++){
+			list.get(i).setReceiverId(changeReceiverId(list.get(i).getReceiverId()));
+		}
+		
 		return map;
 	}
 	
@@ -88,6 +97,16 @@ public class ProductServiceImpl implements ProductService{
 	
 	public int deleteComment(int commentNo) throws Exception {
 		return productDAO.deleteComment(commentNo);
+	}
+	
+	public String changeReceiverId(String receiverId){
+		if(receiverId==null){
+			receiverId="";
+		}else{
+			receiverId="@"+receiverId+" ";
+		}
+		
+		return receiverId;
 	}
 
 }

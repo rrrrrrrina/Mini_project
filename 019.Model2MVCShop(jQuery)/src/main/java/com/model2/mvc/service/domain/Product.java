@@ -1,6 +1,7 @@
 package com.model2.mvc.service.domain;
 
 import java.sql.Date;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,7 @@ public class Product {
 	private int countLiked;
 	private String oriFileName;
 	private String newFileName;
+	private List<MultipartFile> images;
 	
 	public Product(){
 	}
@@ -82,21 +84,13 @@ public class Product {
 		this.countLiked = countLiked;
 	}
 
-	public String getOriFileName() {
-		return oriFileName;
-	}
+	public List<MultipartFile> getImages() {
+        return images;
+    }
+    public void setImages(List<MultipartFile> images) {
+        this.images = images;
+    }
 
-	public void setOriFileName(String oriFileName) {
-		this.oriFileName = oriFileName;
-	}
-
-	public String getNewFileName() {
-		return newFileName;
-	}
-
-	public void setNewFileName(String newFileName) {
-		this.newFileName = newFileName;
-	}
 
 	@Override
 	public String toString() {

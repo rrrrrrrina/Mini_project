@@ -1,9 +1,10 @@
-<%@ page contentType="text/html; charset=euc-kr" %>
 
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
 
 <html>
 <head>
-<title>»óÇ°µî·Ï</title>
+<title>ìƒí’ˆë“±ë¡</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -29,26 +30,26 @@
 
 
 	function fncAddProduct(){
-		//Form À¯È¿¼º °ËÁõ
+		//Form ìœ íš¨ì„± ê²€ì¦
 	 	var name = $("input[name='prodName']").val();
 		var detail = $("input[name='prodDetail']").val();
 		var manuDate = $("input[name='manuDate']").val();
 		var price = $("input[name='price']").val();
 		
 		if(name == null || name.length<1){
-			alert("»óÇ°¸íÀº ¹İµå½Ã ÀÔ·ÂÇÏ¿©¾ß ÇÕ´Ï´Ù.");
+			alert("ìƒí’ˆëª…ì€ ë°˜ë“œì‹œ ì…ë ¥í•˜ì—¬ì•¼ í•©ë‹ˆë‹¤.");
 			return;
 		}
 		if(detail == null || detail.length<1){
-			alert("»óÇ°»ó¼¼Á¤º¸´Â ¹İµå½Ã ÀÔ·ÂÇÏ¿©¾ß ÇÕ´Ï´Ù.");
+			alert("ìƒí’ˆìƒì„¸ì •ë³´ëŠ” ë°˜ë“œì‹œ ì…ë ¥í•˜ì—¬ì•¼ í•©ë‹ˆë‹¤.");
 			return;
 		}
 		if(manuDate == null || manuDate.length<1){
-			alert("Á¦Á¶ÀÏÀÚ´Â ¹İµå½Ã ÀÔ·ÂÇÏ¼Å¾ß ÇÕ´Ï´Ù.");
+			alert("ì œì¡°ì¼ìëŠ” ë°˜ë“œì‹œ ì…ë ¥í•˜ì…”ì•¼ í•©ë‹ˆë‹¤.");
 			return;
 		}
 		if(price == null || price.length<1){
-			alert("°¡°İÀº ¹İµå½Ã ÀÔ·ÂÇÏ¼Å¾ß ÇÕ´Ï´Ù.");
+			alert("ê°€ê²©ì€ ë°˜ë“œì‹œ ì…ë ¥í•˜ì…”ì•¼ í•©ë‹ˆë‹¤.");
 			return;
 		}
 		alert($("#fileName").val());
@@ -83,51 +84,51 @@
    	
    	<div class="container">
 		<div class="page-header">
-		    <h3 class=" text-info">»óÇ°µî·Ï</h3>
+		    <h3 class=" text-info">ìƒí’ˆë“±ë¡</h3>
 		</div>	
 	    <div class="formbg">
 
 		<form class="form-horizontal" enctype="multipart/form-data">
 		
 		  <div class="row">
-		  	<div class="col-xs-4 col-md-2"><strong>»óÇ°¸í</strong></div>
+		  	<div class="col-xs-4 col-md-2"><strong>ìƒí’ˆëª…</strong></div>
 		    <div class="col-xs-8 col-md-4"><input type="text" name="prodName"></div>
 		  </div>
 		  
 		  <hr/>
 		  
 		  <div class="row">
-		 	<div class="col-xs-4 col-md-2"><strong>»óÇ°»ó¼¼Á¤º¸</strong></div>
+		 	<div class="col-xs-4 col-md-2"><strong>ìƒí’ˆìƒì„¸ì •ë³´</strong></div>
 		    <div class="col-xs-8 col-md-4"><input type="text" name="prodDetail"/></div>
 		  </div>
 		  
 		  <hr/>
 		  
 		  <div class="row">
-		  	<div class="col-xs-4 col-md-2"><strong>Á¦Á¶ÀÏÀÚ</strong></div>
+		  	<div class="col-xs-4 col-md-2"><strong>ì œì¡°ì¼ì</strong></div>
 		    <div class="col-xs-8 col-md-4"><p><input type="text" id="datepicker" name="manuDate" ></p></div>
 		  </div>
 		  
 		  <hr/>
 		  
 		  <div class="row">
-		  	<div class="col-xs-4 col-md-2"><strong>°¡°İ</strong></div>
-		    <div class="col-xs-8 col-md-4"><input type="text" name="price">&nbsp;¿ø</div>
+		  	<div class="col-xs-4 col-md-2"><strong>ê°€ê²©</strong></div>
+		    <div class="col-xs-8 col-md-4"><input type="text" name="price">&nbsp;ì›</div>
 		  </div>
 		  
 		  <hr/>
 		  
 		  <div class="row">
-		  	<div class="col-xs-4 col-md-2"><strong>»óÇ°ÀÌ¹ÌÁö</strong></div>
-		    <div class="col-xs-8 col-md-4"><input type="file" name="fileName[]" id="fileName" multiple/></div>
+		  	<div class="col-xs-4 col-md-2"><strong>ìƒí’ˆì´ë¯¸ì§€</strong></div>
+		    <div class="col-xs-8 col-md-4"><input type="file" name="images" id="fileName" multiple/></div>
 		  </div>
 		  
 		  <hr/>
 		  
 		  <div class="row">
 		    <div class="col-sm-offset-4  col-sm-4 text-center">
-		      <button type="button" class="btn btn-primary" id="enroll">µî·Ï</button>
-			 <button type="button" class="btn btn-primary" id="cancel">Ãë¼Ò</button>
+		      <button type="button" class="btn btn-primary" id="enroll">ë“±ë¡</button>
+			 <button type="button" class="btn btn-primary" id="cancel">ì·¨ì†Œ</button>
 		    </div>
 		  </div>
 		  </form>

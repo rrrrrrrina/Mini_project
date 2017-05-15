@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html lang="ko">
@@ -45,6 +45,7 @@
 		var userIds=[];
 		var prodNo=$('#productNo').val();
 		var gotResult=0;
+		var userId=$('#userId').val();
 		
 		$("#cancel").on("click" , function() {
 			$("form").attr("method" , "POST").attr("action" , "/product/deleteWishList").submit();
@@ -79,19 +80,27 @@
 								prodNo:prodNo
 								} , 
 						success : function(serverData , status) {
+							
+							var icons="";
+							var receiverId=serverData.comment.receiverId;
+							
+							if(serverData.comment.commenterId==userId){
+								icons='<i class="fa fa-times-circle-o" style="margin:10"></i>'
+	  									+'<i class="fa fa-pencil" aria-hidden="true"></i>';
+							}
 						
 							var displayValue='<span id="'+serverData.comment.commentNo+'">'
 											+'<div class="row">'
 											+'<div class="col-xs-4 col-md-2">'
 											+'<td><strong>'+serverData.comment.commenterId+'</strong></td></div>'
 											+'<div class="col-xs-8 col-md-6">'
-											+serverData.comment.receiverId
-											+serverData.comment.contents
-											+'('+serverData.comment.commentDate+')'
-											+'<i class="fa fa-times-circle-o" style="margin:10"></i>'
+											+receiverId
+											+'<span>'+serverData.comment.contents+'</span>'
+											+'<span>('+serverData.comment.commentDate+')</span>'
+											+icons;
 											+'<input type="hidden" id="commentNo" name="commentNo" value="'+serverData.comment.commentNo+'">'
 											+'</div></div></span>';
-							
+											
 							$("#productNo").after(displayValue);
 							$("#contents").val("");
 							
@@ -150,20 +159,43 @@
 						},
 						context : this,
 						success : function(serverData , status) {
+							
+							
+							
 							for(var i=0; i<serverData.list.length; i++){
+								
+								var icons="";
+								var dateHtml='('+serverData.list[i].commentDate+')';
+								var receiverId=serverData.list[i].receiverId
+								
+								if(serverData.list[i].receiverId==null){
+									serverData.list[i].receiverId="";
+								}
+								
+								if(serverData.list[i].commenterId==userId){
+									icons='<i class="fa fa-times-circle-o" style="margin:10"></i>'
+		  									+'<i class="fa fa-pencil" aria-hidden="true"></i>';
+								}
+
+								if(serverData.list[i].isFixed==1){
+									dateHtml='(ìˆ˜ì •ëœë‚ ì§œ:'+serverData.list[i].commentDate+')';
+								}
+								
+								
 								var displayValue='<c:forEach var="comment" items="'+serverData.list+'">'
 								+'<span id="'+serverData.list[i].commentNo+'">'
 								+'<div class="row">'
 								+'<div class="col-xs-4 col-md-2">'
 								+'<td><strong>'+serverData.list[i].commenterId+'</strong></td></div>'
 								+'<div class="col-xs-8 col-md-6">'
-								+serverData.list[i].receiverId
-								+serverData.list[i].contents+'('+serverData.list[i].commentDate+')'
-								+'<i class="fa fa-times-circle-o" style="margin:10"></i>'
+								+receiverId
+								+'<span>'+serverData.list[i].contents+'</span><span>('+dateHtml+')</span>'
+								+icons
 								+'<input type="hidden" id="commentNo" name="commentNo" value="'+serverData.list[i].commentNo+'">'
 								+'</div></div></span></c:forEach>';
 
 								$("#moreComments").before(displayValue);
+								
 							} 
 							$("#currentPage").val(serverData.currentPage);
 						}
@@ -171,8 +203,7 @@
 		});
 		
 		$('body').on('click' , '.fa-times-circle-o', function() {
-			var commentNo=$(this).next().val();
-			
+			var commentNo=$(this).next().next().val();
 			$.ajax( 
 					{
 						url : "/product/deleteComment/"+commentNo,
@@ -184,7 +215,49 @@
 						},
 						context : this,
 						success : function(serverData , status) {
-							$( "#"+serverData.commentNo+"" ).remove();
+							$( "#"+commentNo+"" ).remove();
+						}
+					});
+		});
+		
+		$('body').on('click' , '.fa-pencil', function() {
+			var contents=$(this).prev().prev().prev().html();
+			
+			var changeTag='<input type="text" id="contents" name="contents" size="40" value="'+contents+'"/>';
+			var changeIcon='<i class="fa fa-check-circle-o" aria-hidden="true" style="margin:10"></i>'
+			
+				$(this).prev().prev().prev().replaceWith(changeTag);
+				$(this).prev().replaceWith(changeIcon);
+				$(this).remove(); 
+		});  
+		
+		$('body').on('click' , '.fa-check-circle-o', function() {		
+			
+			var commentNo=$(this).next().val();
+			var contents=$(this).prev().prev().val();
+			
+			$.ajax( 
+					{
+						url : "/product/updateJsonComment/"+commentNo,
+						method : "GET" ,
+						dataType : "json" ,
+						headers : {
+							"Accept" : "application/json",
+							"Content-Type" : "application/json"
+						},
+						context : this,
+						data : {
+							changedContents:contents
+							} , 
+						success : function(serverData , status) {
+							var changeTag='<span>'+serverData.comment.contents+'</span>';
+							var changeIcons='<i class="fa fa-times-circle-o" style="margin:10"></i>'
+								+'<i class="fa fa-pencil" aria-hidden="true"></i>';
+							var changeHtml='(ìˆ˜ì •ëœë‚ ì§œ:'+serverData.comment.commentDate+')';
+								
+							$(this).prev().prev().replaceWith(changeTag);
+							$(this).prev().html(changeHtml);
+							$(this).replaceWith(changeIcons);
 						}
 					});
 		});
@@ -201,56 +274,57 @@
 	
 	<div class="container">
 		<div class="page-header">
-	       <h3 class=" text-info">»óÇ°»ó¼¼Á¶È¸</h3>
+	       <h3 class=" text-info">ìƒí’ˆìƒì„¸ì¡°íšŒ</h3>
 	    </div>	
 	    <div class="formbg">
 		
 		<input type="hidden" value="${search.currentPage}" name="currentPage" id="currentPage"/>
+		<input type="hidden" value="${user.userId}" name="userId" id="userId"/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2"><strong>»óÇ°¹øÈ£</strong></div>
+	  		<div class="col-xs-4 col-md-2"><strong>ìƒí’ˆë²ˆí˜¸</strong></div>
 			<div class="col-xs-8 col-md-4">${product.prodNo}</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2"><strong>»óÇ°¸í</strong></div>
+	  		<div class="col-xs-4 col-md-2"><strong>ìƒí’ˆëª…</strong></div>
 			<div class="col-xs-8 col-md-4">${product.prodName}</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2"><strong>»óÇ°ÀÌ¹ÌÁö</strong></div>
+	  		<div class="col-xs-4 col-md-2"><strong>ìƒí’ˆì´ë¯¸ì§€</strong></div>
 			<img src = "/images/uploadFiles/${product.fileName}"/>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2"><strong>»óÇ°»ó¼¼Á¤º¸</strong></div>
+	  		<div class="col-xs-4 col-md-2"><strong>ìƒí’ˆìƒì„¸ì •ë³´</strong></div>
 			<div class="col-xs-8 col-md-4">${product.prodDetail}"</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2"><strong>Á¦Á¶ÀÏÀÚ</strong></div>
+	  		<div class="col-xs-4 col-md-2"><strong>ì œì¡°ì¼ì</strong></div>
 			<div class="col-xs-8 col-md-4">${product.manuDate}"</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2"><strong>°¡°İ</strong></div>
+	  		<div class="col-xs-4 col-md-2"><strong>ê°€ê²©</strong></div>
 			<div class="col-xs-8 col-md-4">${product.price}"</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2"><strong>µî·ÏÀÏÀÚ</strong></div>
+	  		<div class="col-xs-4 col-md-2"><strong>ë“±ë¡ì¼ì</strong></div>
 			<div class="col-xs-8 col-md-4">${product.regDate}"</div>
 		</div>
 		<hr/>
@@ -266,8 +340,8 @@
 				<div class="ui-widget">
 					<labal for="contents">
 						<div class="col-xs-8 col-md-6">
-							<input type="text" id="contents" name="contents" size="40" value="´ñ±ÛÀ» ³²°ÜÁÖ¼¼¿ä." onFocus="value=''"/>
-							<input type="button" class="search btn-default" id="send" value="È®ÀÎ" >
+							<input type="text" id="contents" name="contents" size="40" value="ëŒ“ê¸€ì„ ë‚¨ê²¨ì£¼ì„¸ìš”." onFocus="value=''"/>
+							<input type="button" class="search btn-default" id="send" value="í™•ì¸" >
 						</div>
 					</labal>
 				</div>
@@ -288,15 +362,26 @@
 							<c:if test="${!empty comment.receiverId}">
 								${comment.receiverId}
 							</c:if>
-							${comment.contents}(${comment.commentDate})
-	  						<i class="fa fa-times-circle-o" style="margin:10"></i>
+							<span>${comment.contents}</span>
+							<span>
+								<c:if test="${comment.isFixed==0}">
+									(${comment.commentDate})
+								</c:if>
+								<c:if test="${comment.isFixed==1}">
+									(ìˆ˜ì •ëœë‚ ì§œ:${comment.commentDate})
+								</c:if>
+							</span>
+							<c:if test="${comment.commenterId==user.userId}">
+	  							<i class="fa fa-times-circle-o" style="margin:10"></i>
+	  							<i class="fa fa-pencil" aria-hidden="true"></i>
+	  						</c:if>
 	  						<input type="hidden" id="commentNo" name="commentNo" value="${comment.commentNo}">
 						</div>
 					</div>
 				</span>
 			</c:forEach>
  			
- 			<input type="button" class="search btn-default" id="moreComments" value="´õº¸±â" >
+ 			<input type="button" class="search btn-default" id="moreComments" value="ë”ë³´ê¸°" >
 		</div>
 		
 		<br/>
@@ -304,15 +389,15 @@
 			<div class="row">
 		  		<div class="col-md-12 text-center ">
 		  			<c:if test='${isDuplicate}'>
-		  				<button class="btn" id="cancel" >ÂòÇÏ±âÃë¼Ò</button>
+		  				<button class="btn" id="cancel" >ì°œí•˜ê¸°ì·¨ì†Œ</button>
 		  			</c:if>
 		  			<c:if test='${!isDuplicate}'>
-		  				<button class="btn" id="wishList" >ÂòÇÏ±â</button>
+		  				<button class="btn" id="wishList" >ì°œí•˜ê¸°</button>
 		  			</c:if>
 		  			<c:if test='${product.proTranCode==0}'>
-		  				<button class="btn" id="purchase" >±¸¸Å</button>
+		  				<button class="btn" id="purchase" >êµ¬ë§¤</button>
 		  			</c:if>
-		  			<button class="btn" id="back" >ÀÌÀü</button>
+		  			<button class="btn" id="back" >ì´ì „</button>
 		  		</div>
 			</div>
 		</div>

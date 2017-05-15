@@ -101,17 +101,17 @@
 		        	<c:set var='i' value='0'/>
 						<c:forEach var="message" items="${list}">
 						<c:set var="i" value="${i+1}"/>
-							<td align="center">${i}</td>
-							<td align="center">${message.senderId}</td>
-							<td align="center">${message.receiveredDate}</td>
+							<td align="center" style="width:5%">${i}</td>
+							<td align="center" style="width:10%; height:50px">${message.senderId}</td>
+							<td align="center" style="width:30%">${message.receiveredDate}</td>
 							<c:set var="readDate" value="${message.readDate}"/>
 							<c:if test="${empty message.readDate}">
-								<td align="center">읽지않음</td>
+								<td align="center" style="width:10%">읽지않음</td>
 							</c:if>
 							<c:if test="${!empty message.readDate}">
 								<td align="center">읽음:${message.readDate}</td>
 							</c:if>
-							<td align="center">${message.contents}</td>
+							<td align="center" style="width:150px height:50px">${message.contents}</td>
 							<td align="center"><input type="checkbox" name="chbox" value="${message.messageNo}"></td>
 							<tr/>
 						</c:forEach>
