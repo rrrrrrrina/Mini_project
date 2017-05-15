@@ -259,6 +259,7 @@
 							$(this).prev().html(changeHtml);
 							$(this).replaceWith(changeIcons);
 						}
+							ㅇㅇ
 					});
 		});
 });
