@@ -1,11 +1,8 @@
 package com.model2.mvc.web.user;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -21,18 +18,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.Message;
-import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.User;
-import com.model2.mvc.service.domain.WishList;
 import com.model2.mvc.service.user.UserService;
 
 
-//==> ȸ������ Controller
 @Controller
 @RequestMapping("/user/*")
 public class UserController {
@@ -41,7 +34,6 @@ public class UserController {
 	@Autowired
 	@Qualifier("userServiceImpl")
 	private UserService userService;
-	//setter Method ���� ����
 		
 	public UserController(){
 		System.out.println(this.getClass());
@@ -76,23 +68,18 @@ public class UserController {
 	public String getUser( @RequestParam("userId") String userId , Model model ) throws Exception {
 		
 		System.out.println("/user/getUser : GET");
-		//Business Logic
 		User user = userService.getUser(userId);
-		// Model �� View ����
 		model.addAttribute("user", user);
 		
 		return "forward:/user/getUser.jsp";
 	}
 	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////  �߰��� �κ� ///////////////////////////////////////////////////////////////
 	@RequestMapping( value="getJsonUser/{userId}", method=RequestMethod.GET )
 	public void getJsonUser( @PathVariable String userId, Model model) throws Exception{
 		
 		System.out.println("/getJsonUser/getUser : GET");
 		//Business Logic
 		User user = userService.getUser(userId);
-		// Model �� View ����
 		model.addAttribute("user", user);
 	}
 	
@@ -117,7 +104,6 @@ public class UserController {
 		System.out.println("/user/updateUser : GET");
 		//Business Logic
 		User user = userService.getUser(userId);
-		// Model �� View ����
 		model.addAttribute("user", user);
 		
 		return "forward:/user/updateUser.jsp";

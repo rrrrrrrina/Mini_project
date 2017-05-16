@@ -47,20 +47,46 @@
 		var gotResult=0;
 		var userId=$('#userId').val();
 		
-		$("#cancel").on("click" , function() {
-			$("form").attr("method" , "POST").attr("action" , "/product/deleteWishList").submit();
-		}); 
-		
-		$("#wishList").on("click" , function() {
-			$("form").attr("method" , "POST").attr("action" , "/product/addWishList").submit();
-		}); 
-		
 		$("#purchase").on("click" , function() {
 			$("form").attr("method" , "POST").attr("action" , "/purchase/addPurchaseView?prodNo=${product.prodNo}").submit();
 		}); 
 		
 		$("#back").on("click" , function() {
 			history.go(-1);
+		});
+		
+		$('body').on('click' , '#cancel', function() {
+				$.ajax( 
+						{
+							url : "/product/deleteJsonWishList/"+prodNo,
+							method : "GET" ,
+							dataType : "json" ,
+							headers : {
+								"Accept" : "application/json",
+								"Content-Type" : "application/json"
+							},
+							context : this,
+							success : function(serverData , status) {
+								$(this).val('찜하기');
+							}
+						});
+		});
+		
+		$('body').on('click' , '#wishList', function() {
+				$.ajax( 
+						{
+							url : "/product/addJsonWishList/"+prodNo,
+							method : "GET" ,
+							dataType : "json" ,
+							headers : {
+								"Accept" : "application/json",
+								"Content-Type" : "application/json"
+							},
+							context : this,
+							success : function(serverData , status) {
+								$(this).val('찜하기취소');
+							}
+						});
 		});
 		
 		$("#send").on("click" , function() {
@@ -80,14 +106,10 @@
 								prodNo:prodNo
 								} , 
 						success : function(serverData , status) {
-							
-							var icons="";
+							 
 							var receiverId=serverData.comment.receiverId;
-							
-							if(serverData.comment.commenterId==userId){
-								icons='<i class="fa fa-times-circle-o" style="margin:10"></i>'
+							var	icons='<i class="fa fa-times-circle-o" style="margin:10"></i>'
 	  									+'<i class="fa fa-pencil" aria-hidden="true"></i>';
-							}
 						
 							var displayValue='<span id="'+serverData.comment.commentNo+'">'
 											+'<div class="row">'
@@ -97,7 +119,7 @@
 											+receiverId
 											+'<span>'+serverData.comment.contents+'</span>'
 											+'<span>('+serverData.comment.commentDate+')</span>'
-											+icons;
+											+icons
 											+'<input type="hidden" id="commentNo" name="commentNo" value="'+serverData.comment.commentNo+'">'
 											+'</div></div></span>';
 											
@@ -225,7 +247,7 @@
 			
 			var changeTag='<input type="text" id="contents" name="contents" size="40" value="'+contents+'"/>';
 			var changeIcon='<i class="fa fa-check-circle-o" aria-hidden="true" style="margin:10"></i>'
-			
+				var commentNo=$(this).next().val();
 				$(this).prev().prev().prev().replaceWith(changeTag);
 				$(this).prev().replaceWith(changeIcon);
 				$(this).remove(); 
@@ -259,8 +281,7 @@
 							$(this).prev().html(changeHtml);
 							$(this).replaceWith(changeIcons);
 						}
-							ㅇㅇ
-					});
+					});	
 		});
 });
 	
@@ -342,7 +363,7 @@
 					<labal for="contents">
 						<div class="col-xs-8 col-md-6">
 							<input type="text" id="contents" name="contents" size="40" value="댓글을 남겨주세요." onFocus="value=''"/>
-							<input type="button" class="search btn-default" id="send" value="확인" >
+							<input type="button" class="btn" id="send" value="확인" >
 						</div>
 					</labal>
 				</div>
@@ -382,7 +403,7 @@
 				</span>
 			</c:forEach>
  			
- 			<input type="button" class="search btn-default" id="moreComments" value="더보기" >
+ 			<input type="button" class="btn" id="moreComments" value="더보기" >
 		</div>
 		
 		<br/>
@@ -390,15 +411,15 @@
 			<div class="row">
 		  		<div class="col-md-12 text-center ">
 		  			<c:if test='${isDuplicate}'>
-		  				<button class="btn" id="cancel" >찜하기취소</button>
+		  				<input type="button" class="btn" id="cancel" value="찜하기취소" >
 		  			</c:if>
 		  			<c:if test='${!isDuplicate}'>
-		  				<button class="btn" id="wishList" >찜하기</button>
+		  				<input type="button" class="btn" id="wishList" value="찜하기" >
 		  			</c:if>
 		  			<c:if test='${product.proTranCode==0}'>
-		  				<button class="btn" id="purchase" >구매</button>
+		  				<input type="button" class="btn" id="purchase" value="구매">
 		  			</c:if>
-		  			<button class="btn" id="back" >이전</button>
+		  			<input type="button" class="btn" id="back" value="이전">
 		  		</div>
 			</div>
 		</div>

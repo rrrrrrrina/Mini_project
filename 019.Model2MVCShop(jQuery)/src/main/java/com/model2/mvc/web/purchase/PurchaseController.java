@@ -142,7 +142,6 @@ public class PurchaseController {
 	public ModelAndView updatePurchase( @ModelAttribute("purchase") Purchase purchase , Model model ) throws Exception{
 
 		System.out.println("/updatePurchase");
-		System.out.println("updatePurchase³»:"+purchase);
 		purchaseService.updatePurcahse(purchase);
 		Purchase purchase2=purchaseService.getPurchase(purchase.getTranNo());
 		
@@ -157,9 +156,7 @@ public class PurchaseController {
 	public ModelAndView updateTranCode( @ModelAttribute("purchase") Purchase purchase , Model model ) throws Exception{
 
 		System.out.println("/updateTranCode");
-		System.out.println("dddddddd"+purchase.getTranNo());
 		Purchase purchase2=purchaseService.getPurchase(purchase.getTranNo());
-		System.out.println("111111111111111111"+purchase2);
 		purchaseService.updateTranCode(purchase2);
 		
 		ModelAndView modelAndView=new ModelAndView();
@@ -212,7 +209,6 @@ public class PurchaseController {
 	public ModelAndView listSale( @ModelAttribute("search") Search search , Model model , HttpSession session) throws Exception{
 		
 		System.out.println("/listSale");
-		System.out.println("listSale³»:"+search);
 		if(search.getCurrentPage() ==0 ){
 			search.setCurrentPage(1);
 		}

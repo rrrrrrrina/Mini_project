@@ -17,8 +17,6 @@ public class Product {
 	private Date regDate;
 	private String proTranCode;
 	private int countLiked;
-	private String oriFileName;
-	private String newFileName;
 	private List<MultipartFile> images;
 	
 	public Product(){
@@ -96,8 +94,7 @@ public class Product {
 	public String toString() {
 		return "Product [fileName=" + fileName + ", manuDate=" + manuDate + ", price=" + price + ", prodDetail="
 				+ prodDetail + ", prodName=" + prodName + ", prodNo=" + prodNo + ", regDate=" + regDate
-				+ ", proTranCode=" + proTranCode + ", countLiked=" + countLiked + ", oriFileName=" + oriFileName
-				+ ", newFileName=" + newFileName + "]";
+				+ ", proTranCode=" + proTranCode + ", countLiked=" + countLiked + ", oriFileName=" + "]";
 	}
 
 }
