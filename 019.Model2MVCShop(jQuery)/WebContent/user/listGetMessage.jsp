@@ -44,7 +44,6 @@
 	$(function() {
 		
 		$( "#desc" ).on("click" , function() {
-			alert("/user/listMessage?searchKeyword=desc&searchMenu="+$("#searchMenu").val());
 			self.location="/user/listMessage?searchCondition=0&searchMenu="+$("#searchMenu").val();
 		});
 		
@@ -103,15 +102,15 @@
 						<c:set var="i" value="${i+1}"/>
 							<td align="center" style="width:5%">${i}</td>
 							<td align="center" style="width:10%; height:50px">${message.senderId}</td>
-							<td align="center" style="width:30%">${message.receiveredDate}</td>
+							<td align="center" style="width:25%">${message.receiveredDate}</td>
 							<c:set var="readDate" value="${message.readDate}"/>
 							<c:if test="${empty message.readDate}">
-								<td align="center" style="width:10%">읽지않음</td>
+								<td align="center" style="width:20%">읽지않음</td>
 							</c:if>
 							<c:if test="${!empty message.readDate}">
 								<td align="center">읽음:${message.readDate}</td>
 							</c:if>
-							<td align="center" style="width:150px height:50px">${message.contents}</td>
+							<td align="center" style="width:30%">${message.contents}</td>
 							<td align="center"><input type="checkbox" name="chbox" value="${message.messageNo}"></td>
 							<tr/>
 						</c:forEach>
@@ -123,7 +122,7 @@
       			</table>
       			</form>
       			<div align="right">
-		     		<button type="button" class="btn btn-default" id="delete">삭제하기</button>
+		     		<button type="button" class="btn btn-default" id="delete" style="width:10%">삭제하기</button>
 		    	</div>
 			</div>
 		<jsp:include page="../common/pageNavigator_new.jsp"/>

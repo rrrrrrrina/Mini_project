@@ -1,14 +1,10 @@
-<%@ page contentType="text/html; charset=euc-kr" %>
-<%
-      pageContext.setAttribute("crcn", "\r\n");
-      pageContext.setAttribute("br", "<br/>");
-%>
-
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
 
 <html>
 <head>
 	<meta charset="EUC-KR">
-	<title>ÂÊÁöº¸³»±â</title>
+	<title>ìª½ì§€ë³´ë‚´ê¸°</title>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	
@@ -30,36 +26,41 @@
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="/css/mystyle.css">
-
+	<link rel="stylesheet" type="text/css" href="../css/font-awesome/css/font-awesome.min.css">
+  	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  	
 	<script type="text/javascript">
 
+	var userIds=[];
+	var counter=0;
+	var receivers=[];
 
 	
-	function fncSendMessage() {
-	var receiverId=$("input[name='receiverId']").val();
-	var contents=$("#contents").val();
-	
-	if(receiverId == null || receiverId.length <1){
-		alert("¹Þ´ÂºÐÀÇ ¾ÆÀÌµð´Â ¹Ýµå½Ã ÀÔ·ÂÇÏ¼Å¾ß ÇÕ´Ï´Ù.");
-		return;
-	}
-	if(contents == null || contents.length <1){
-		alert("¸Þ¼¼Áö´Â  ¹Ýµå½Ã ÀÔ·ÂÇÏ¼Å¾ß ÇÕ´Ï´Ù.");
-		return;
-	}
-	$("form").attr("method" , "POST").attr("action" , "/user/sendMessage").submit();
-	}
-	
-	function appendNode(){
-		var divElem="<input type='text' style='margin:3' class='form-control' id='receiverIdExtra' name='receiverIdExtra'/>";
-		$("input:last").after(divElem);
-	}
-	
-	function deleteNode(){
-		$("#receiverId:last").remove();
-	}
-	
 	$(function() {
+		
+		function fncSendMessage() {
+			var receiverId=$("input[name='receiverId']").val();
+			var contents=$("#contents").val();
+			
+			if(receiverId == null || receiverId.length <1){
+				alert("ë°›ëŠ”ë¶„ì˜ ì•„ì´ë””ëŠ” ë°˜ë“œì‹œ ìž…ë ¥í•˜ì…”ì•¼ í•©ë‹ˆë‹¤.");
+				return;
+			}
+			if(contents == null || contents.length <1){
+				alert("ë©”ì„¸ì§€ëŠ”  ë°˜ë“œì‹œ ìž…ë ¥í•˜ì…”ì•¼ í•©ë‹ˆë‹¤.");
+				return;
+			}
+			$("form").attr("method" , "POST").attr("action" , "/user/sendMessage").submit();
+		}
+		
+		function deleteNode(){
+			$("#receiverId:last").remove();
+		}
+		
+		var gotResult=0;
+		
+		
 		$( "#send" ).on("click" , function() {
 			fncSendMessage();
 		});
@@ -69,7 +70,10 @@
 		});
 		
 		$( "#addReceiver" ).on("click" , function() {
-			appendNode();
+			var divElem="<input type='text' style='margin:3' class='form-control' id='receiverIdExtra"+counter+"' name='receiverIdExtra'/>";
+			$("input:last").after(divElem);
+			$("#receiverIdExtra"+counter).autocomplete({source:userIds});
+			counter++;
 		});
 		
 		$( "#deleteReceiver" ).on("click" , function() {
@@ -81,7 +85,33 @@
 			var mes = '${message.contents}'.replace("\r\n","<br>");
 			var mes2 = 'RE:'+mes;
 			$("#contents").val(mes2);
-		}; 
+		};
+		 
+		$('body').on('keyup' , '#receiverId', function() {
+			$.ajax( 
+					{
+						url : "/user/getJsonUserIds/"+gotResult,
+						method : "GET" ,
+						dataType : "json" ,
+						headers : {
+							"Accept" : "application/json",
+							"Content-Type" : "application/json"
+						},
+						context : this,
+						success : function(serverData , status) {
+							if(gotResult==0){
+								for(var i=0; i<serverData.list.length; i++){
+									userIds.push(serverData.list[i]);
+								}
+							}
+							gotResult=serverData.gotResult;
+						}
+			});
+		});
+		
+		$( "#receiverId" ).autocomplete({
+			source: userIds
+		});
 	});
 	
 
@@ -94,15 +124,15 @@
 
 	<div class="container">
 		<div class="page-header" >
-	       <h3 class=" text-info">ÂÊÁöº¸³»±â</h3>
+	       <h3 class=" text-info">ìª½ì§€ë³´ë‚´ê¸°</h3>
 	    </div>
 	
 		<form class="form-horizontal formbg">
 		
 		  <div class="form-group">
-		    <label for="userId" class="col-sm-offset-1 col-sm-3 control-label">¹Þ´Â»ç¶÷ &nbsp;&nbsp;
-		    <button type="button" class="search" id="addReceiver" style='height:30px'>Ãß°¡</button>
-		    <button type="button" class="search" id="deleteReceiver" style='height:30px'>»èÁ¦</button></label>
+		    <label for="userId" class="col-sm-offset-1 col-sm-3 control-label">ë°›ëŠ”ì‚¬ëžŒ &nbsp;&nbsp;
+		    <input type="button" class="btn" id="addReceiver" style='height:30px' value="ì¶”ê°€">
+		    <input type="button" class="btn" id="deleteReceiver" style='height:30px' value="ì‚­ì œ" ></label>
 		    <div class="col-sm-2">
 		      <input type="text" class="form-control" id="receiverId" name="receiverId" value="${!empty message.senderId? message.senderId :""}">
 		    </div>
@@ -117,8 +147,8 @@
 		  
 		  <div class="form-group">
 				<div class="col-sm-offset-4  col-sm-4 text-center">
-			    	<button type="button" class="btn" id="send">º¸³»±â</button>
-			    	<button type="button" class="btn" id="cancel">Ãë¼Ò</button>
+			    	<button class="btn" id="send">ë³´ë‚´ê¸°</button>
+			    	<button class="btn" id="cancel">ì·¨ì†Œ</button>
 			    </div>
 		  </div>
 		
