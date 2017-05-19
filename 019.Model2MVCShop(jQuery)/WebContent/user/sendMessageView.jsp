@@ -40,7 +40,7 @@
 	$(function() {
 		
 		function fncSendMessage() {
-			var receiverId=$("input[name='receiverId']").val();
+			var receiverId=$("#receiverId").val();
 			var contents=$("#contents").val();
 			
 			if(receiverId == null || receiverId.length <1){

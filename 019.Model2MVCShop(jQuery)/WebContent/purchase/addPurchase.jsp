@@ -72,7 +72,6 @@
 					  <td align="center">${ i }</td>
 					  <td align="center"><img src="/images/uploadFiles/${product.fileName}" width="50" height="50"/>
 					  <td align="center">${product.prodName}</td>
-					  <td align="center">${product.price}</td>
 					  <td align="center">${purchase.divyAddr}</td>
 					  <td align="center">${purchase.receiverName}</td>
 					  <td align="center">${purchase.divyRequest}</td>

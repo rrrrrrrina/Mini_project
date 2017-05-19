@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
@@ -8,6 +8,7 @@
 	
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	
    <link href="/css/animate.min.css" rel="stylesheet">
    <link href="/css/bootstrap-dropdownhover.min.css" rel="stylesheet">
@@ -53,13 +54,13 @@
 	
 	<div class="container">
 		<div class="page-header">
-	       <h3 class=" text-info">»óÇ°±¸¸Å</h3>
+	       <h3 class=" text-info">ìƒí’ˆêµ¬ë§¤</h3>
 	    </div>
    	
 		<form class="form-horizontal formbg">
 			<div class="form-group">
 				<div class="row">
-					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">»óÇ°¸í</label>
+					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">ìƒí’ˆëª…</label>
 					<div class="col-xs-8 col-md-4">${product.prodName}</div>
 				</div>
 			</div>
@@ -67,91 +68,90 @@
 			<input type="hidden" name="prodNo" value="${product.prodNo}"/>
 			<div class="form-group">
 				<div class="row">
-					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">»óÇ°¹øÈ£</label>
+					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">ìƒí’ˆë²ˆí˜¸</label>
 					<div class="col-xs-8 col-md-4">${product.prodNo}</div>
 				</div>
 			</div>
 			
 			<div class="form-group">
 				<div class="row">
-					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">»óÇ°»ó¼¼Á¤º¸</label>
+					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">ìƒí’ˆìƒì„¸ì •ë³´</label>
 					<div class="col-xs-8 col-md-4">${product.prodDetail}</div>
 				</div>
 			</div>
 			
 			<div class="form-group">
 				<div class="row">
-					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">Á¦Á¶ÀÏÀÚ</label>
+					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">ì œì¡°ì¼ìž</label>
 					<div class="col-xs-8 col-md-4">${product.manuDate}</div>
 				</div>
 			</div>
 				
 			<div class="form-group">
 				<div class="row">
-					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">°¡°Ý</label>
+					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">ê°€ê²©</label>
 					<div class="col-xs-8 col-md-4">${product.price}</div>
 				</div>
 			</div>	
 			
 			<div class="form-group">
 				<div class="row">
-					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">µî·ÏÀÏÀÚ</label>
+					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">ë“±ë¡ì¼ìž</label>
 					<div class="col-xs-8 col-md-4">${product.regDate}</div>
 				</div>
 			</div>
 			
 			<div class="form-group">
 				<div class="row">
-					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">±¸¸ÅÀÚ¾ÆÀÌµð</label>
+					<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">êµ¬ë§¤ìžì•„ì´ë””</label>
 					<div class="col-xs-8 col-md-4">${user.userId}</div>
 				</div>
 			</div>
 			
 			<div class="form-group">
-		    	<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">±¸¸Å¹æ¹ý</label>
+		    	<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">êµ¬ë§¤ë°©ë²•</label>
 				    <div class="col-sm-4">
-						<select 	name="paymentOption"		class="ct_input_g" 
-									style="width: 100px; height: 19px" maxLength="20">
-							<option value="1" selected="selected">Çö±Ý±¸¸Å</option>
-							<option value="2">½Å¿ë±¸¸Å</option>
+						<select name="paymentOption" style="width: 120px; height: 30px; color:black" maxLength="20">
+							<option value="1" selected="selected">í˜„ê¸ˆêµ¬ë§¤</option>
+							<option value="2">ì‹ ìš©êµ¬ë§¤</option>
 						</select>
 				    </div>
 		    </div>
 		  
 		  	<div class="form-group">
-			    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">±¸¸ÅÀÚÀÌ¸§</label>
+			    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">êµ¬ë§¤ìžì´ë¦„</label>
 				    <div class="col-sm-4">
 						<input type="text" name="receiverName" class="ct_input_g" 
-									style="width: 200px; height: 19px" maxLength="13" value="${user.userName}"/>  
+									style="width: 200px; height: 30px" maxLength="13" value="${user.userName}"/>  
 				    </div>
 		    </div>
 		    
 		    <div class="form-group">
-			    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">±¸¸ÅÀÚ¿¬¶ôÃ³</label>
+			    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">êµ¬ë§¤ìžì—°ë½ì²˜</label>
 				    <div class="col-sm-4">
 						<input type="text" name="receiverPhone" class="ct_input_g" 
-									style="width: 200px; height: 19px" maxLength="13" value="${user.phone}"/>  
+									style="width: 200px; height: 30px" maxLength="13" value="${user.phone}"/>  
 				    </div>
 		    </div>
 		    
 		    <div class="form-group">
-			    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">±¸¸ÅÀÚÁÖ¼Ò</label>
+			    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">êµ¬ë§¤ìžì£¼ì†Œ</label>
 				    <div class="col-sm-4">
 						<input type="text" name="divyAddr" class="ct_input_g" 
-									style="width: 200px; height: 19px" maxLength="13" value="${user.addr}"/>  
+									style="width: 200px; height: 30px" maxLength="13" value="${user.addr}"/>  
 				    </div>
 		    </div>
 		    
 		    <div class="form-group">
-			    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">±¸¸Å¿äÃ»»çÇ×</label>
+			    <label for="userName" class="col-sm-offset-1 col-sm-3 control-label">êµ¬ë§¤ìš”ì²­ì‚¬í•­</label>
 				    <div class="col-sm-4">
 						<input type="text" name="divyRequest" class="ct_input_g" 
-									style="width: 200px; height: 19px" maxLength="13" value=""/>  
+									style="width: 200px; height: 30px" maxLength="13" value=""/>  
 				    </div>
 		    </div>
 		    
 		    <div class="form-group">
-		   		<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">¹è¼ÛÈñ¸ÁÀÏÀÚ</label>
+		   		<label for="userName" class="col-sm-offset-1 col-sm-3 control-label">ë°°ì†¡í¬ë§ì¼ìž</label>
 		    		<div class="col-sm-4">
 		    			<input type="text" id="datepicker" class="ct_input_g" name="divyDate" >
 		    		</div>
@@ -159,8 +159,8 @@
 		  	
 		  	<div class="form-group">
 		   		<div class="col-sm-offset-4  col-sm-4 text-center">
-		    		<button type="button" class="btn" id="purchase">±¸¸Å</button>
-		    		<button type="button" class="btn" id="cancel">Ãë¼Ò</button>
+		    		<button type="button" class="btn" id="purchase">êµ¬ë§¤</button>
+		    		<button type="button" class="btn" id="cancel">ì·¨ì†Œ</button>
 		    	</div>
 		  	</div>
 		</form>
